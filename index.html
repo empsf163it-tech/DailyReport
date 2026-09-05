@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Work Report & WhatsApp/Slack Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><defs><linearGradient id='g1' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23818CF8'/><stop offset='100%' stop-color='%234F46E5'/></linearGradient><linearGradient id='g2' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%2334D399'/><stop offset='100%' stop-color='%23059669'/></linearGradient></defs><rect width='32' height='32' rx='9' fill='url(%23g1)'/><path d='M10 8C10 6.89543 10.8954 6 12 6H20C21.1046 6 22 6.89543 22 8V24C22 25.1046 21.1046 26 20 26H12C10.8954 26 10 25.1046 10 24V8Z' fill='%231E1B4B' fill-opacity='0.5'/><path d='M10 9C10 7.89543 10.8954 7 12 7H20C21.1046 7 22 7.89543 22 9V23C22 24.1046 21.1046 25 20 25H12C10.8954 25 10 24.1046 10 23V9Z' stroke='%23E0E7FF' stroke-width='1.8' stroke-linejoin='round'/><path d='M14 6H18V8H14V6Z' fill='%23E0E7FF'/><path d='M13 12H19M13 16H17' stroke='%23E0E7FF' stroke-width='1.8' stroke-linecap='round'/><path d='M18.5 17L15 22.5H19.5L18 26L23.5 19.5H19.5L21 17H18.5Z' fill='url(%23g2)'/></svg>">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="brand-icon" title="Daily Work Tracker">
+          <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="logoGradIndex" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#818CF8" />
+                <stop offset="100%" stop-color="#4F46E5" />
+              </linearGradient>
+              <linearGradient id="sparkGradIndex" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#34D399" />
+                <stop offset="100%" stop-color="#059669" />
+              </linearGradient>
+            </defs>
+            <rect width="32" height="32" rx="9" fill="url(#logoGradIndex)" />
+            <path d="M10 8C10 6.89543 10.8954 6 12 6H20C21.1046 6 22 6.89543 22 8V24C22 25.1046 21.1046 26 20 26H12C10.8954 26 10 25.1046 10 24V8Z" fill="#1E1B4B" fill-opacity="0.5"/>
+            <path d="M10 9C10 7.89543 10.8954 7 12 7H20C21.1046 7 22 7.89543 22 9V23C22 24.1046 21.1046 25 20 25H12C10.8954 25 10 24.1046 10 23V9Z" stroke="#E0E7FF" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M14 6H18V8H14V6Z" fill="#E0E7FF"/>
+            <path d="M13 12H19M13 16H17" stroke="#E0E7FF" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M18.5 17L15 22.5H19.5L18 26L23.5 19.5H19.5L21 17H18.5Z" fill="url(#sparkGradIndex)" />
+          </svg>
+        </div>
+        <div>
+          <h1>Daily Work Report</h1>
+          <p class="subtitle">InfoTech & SmartFusion Websites Work Tracker</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="date-badge" id="currentDateBadge">📅 Loading date...</div>
+        <button class="btn btn-outline" id="btnLoadSample">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          Load Sample
+        </button>
+        <button class="btn btn-outline" id="btnResetForm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          Reset
+        </button>
+        <button class="btn btn-secondary" id="btnOpenHistory">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          History (<span id="historyCount">0</span>)
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace Layout -->
+    <main class="main-content">
+      <!-- Left Column: Input Form Sections -->
+      <div class="form-column">
+        
+        <!-- User & Role Settings Card -->
+        <section class="card">
+          <div class="card-header">
+            <span class="icon-badge icon-indigo">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </span>
+            <h2>Report Metadata & Integrations</h2>
+          </div>
+          <div class="card-body grid-2">
+            <div class="form-group">
+              <label for="userName">Your Name / ID</label>
+              <input type="text" id="userName" placeholder="e.g. Vamsi Krishna" value="Vamsi Krishna">
+            </div>
+            <div class="form-group">
+              <label for="userRole">Your Work Role</label>
+              <select id="userRole">
+                <option value="Developer">💻 Developer Mode</option>
+                <option value="Tester">🧪 QA / Tester Mode</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="colleagueName">Colleague / Lead Name</label>
+              <input type="text" id="colleagueName" placeholder="e.g. Manager / Team Lead" value="Manager / Team Lead">
+            </div>
+            <div class="form-group">
+              <label for="whatsappPhone">Colleague WhatsApp Number <small>(Optional)</small></label>
+              <input type="tel" id="whatsappPhone" placeholder="e.g. 919876543210">
+            </div>
+            <div class="form-group grid-span-2">
+              <label for="slackWebhook" class="text-purple">🟪 Slack Webhook URL <small>(Optional for 1-Click Channel Posting)</small></label>
+              <input type="text" id="slackWebhook" placeholder="https://hooks.slack.com/services/T000/B000/XXXXXX">
+            </div>
+          </div>
+        </section>
+
+        <!-- Shift & Hours Tracker Card -->
+        <section class="card highlight-card">
+          <div class="card-header space-between">
+            <div class="title-with-icon">
+              <span class="icon-badge icon-cyan">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </span>
+              <h2>Work Shift & Hours Tracker</h2>
+            </div>
+            <span class="badge badge-info">Realtime Math</span>
+          </div>
+          <div class="card-body">
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="loginTime">Login Time (IST)</label>
+                <div class="input-with-presets">
+                  <input type="time" id="loginTime" value="07:30">
+                  <div class="preset-pills">
+                    <button type="button" class="pill" data-target="loginTime" data-time="07:30">07:30 AM</button>
+                    <button type="button" class="pill" data-target="loginTime" data-time="08:00">08:00 AM</button>
+                    <button type="button" class="pill" data-target="loginTime" data-time="09:00">09:00 AM</button>
+                    <button type="button" class="pill" data-target="loginTime" data-time="11:00">11:00 AM</button>
+                    <button type="button" class="pill" data-target="loginTime" data-action="now">Now</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="logoutTime">Logout Time (Custom Night/Day)</label>
+                <div class="input-with-presets">
+                  <input type="time" id="logoutTime" value="16:30">
+                  <div class="preset-pills">
+                    <button type="button" class="pill" data-target="logoutTime" data-time="16:30">04:30 PM</button>
+                    <button type="button" class="pill" data-target="logoutTime" data-time="17:30">05:30 PM</button>
+                    <button type="button" class="pill" data-target="logoutTime" data-time="19:00">07:00 PM</button>
+                    <button type="button" class="pill" data-target="logoutTime" data-action="now">Now</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dynamic Live Hours Counter -->
+            <div class="hours-summary-bar">
+              <div class="metric-box">
+                <span class="metric-label">Gross Shift</span>
+                <span class="metric-value" id="grossShiftValue">9 hrs 0 mins</span>
+              </div>
+              <div class="metric-divider">-</div>
+              <div class="metric-box">
+                <span class="metric-label">Total Breaks</span>
+                <span class="metric-value text-amber" id="totalBreaksValue">0 mins</span>
+              </div>
+              <div class="metric-divider">=</div>
+              <div class="metric-box highlight">
+                <span class="metric-label">Net Working Hours</span>
+                <span class="metric-value text-emerald" id="netWorkingValue">9 hrs 0 mins</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Primary Active Projects Card -->
+        <section class="card">
+          <div class="card-header space-between">
+            <div class="title-with-icon">
+              <span class="icon-badge icon-purple">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              </span>
+              <h2>Active Projects</h2>
+            </div>
+            <button type="button" class="btn btn-xs btn-outline" id="btnAddProject">+ Add Custom Project</button>
+          </div>
+          <div class="card-body">
+            <div id="projectsList" class="projects-tag-list">
+              <!-- Project tags rendered here -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Tasks Done Card -->
+        <section class="card">
+          <div class="card-header space-between">
+            <div class="title-with-icon">
+              <span class="icon-badge icon-emerald">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              </span>
+              <h2>Tasks Completed & Work Items</h2>
+            </div>
+            <button type="button" class="btn btn-primary" id="btnAddTask">+ Add Task Item</button>
+          </div>
+          <div class="card-body">
+            <div id="tasksList" class="dynamic-list">
+              <!-- Task items injected dynamically -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Breaks Log Card -->
+        <section class="card">
+          <div class="card-header space-between">
+            <div class="title-with-icon">
+              <span class="icon-badge icon-amber">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+              </span>
+              <h2>Breaks Taken</h2>
+            </div>
+            <div class="quick-break-buttons">
+              <button type="button" class="btn btn-xs btn-outline" id="btnQuickLunch">+ 45m Lunch</button>
+              <button type="button" class="btn btn-xs btn-outline" id="btnQuickTea">+ 15m Tea</button>
+              <button type="button" class="btn btn-xs btn-primary" id="btnAddBreak">+ Add Break</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="breaksList" class="dynamic-list">
+              <!-- Break items injected dynamically -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Blockers & Tomorrow's Plan Card -->
+        <section class="card">
+          <div class="card-header">
+            <span class="icon-badge icon-rose">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </span>
+            <h2>Blockers & Tomorrow's Target Plan</h2>
+          </div>
+          <div class="card-body grid-2">
+            <div class="form-group">
+              <label for="blockersInput" class="text-rose">🚨 Blockers / Need Help On <small>(Optional)</small></label>
+              <textarea id="blockersInput" rows="3" placeholder="e.g. Waiting for client server credentials / API approval pending..."></textarea>
+            </div>
+            <div class="form-group">
+              <label for="tomorrowPlanInput" class="text-emerald">🎯 Tomorrow's Target Plan (EOD)</label>
+              <textarea id="tomorrowPlanInput" rows="3" placeholder="e.g. Today By EOD Planning to create at least 2 websites."></textarea>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Right Column: Live WhatsApp / Slack Preview & Actions -->
+      <div class="preview-column">
+        <div class="sticky-preview">
+          <div class="card preview-card">
+            <!-- Platform Mode Selector Tabs -->
+            <div class="card-header space-between">
+              <div class="platform-tabs">
+                <button type="button" class="tab-btn active" id="tabWhatsapp">
+                  💬 WhatsApp Mode
+                </button>
+                <button type="button" class="tab-btn" id="tabSlack">
+                  🟪 Slack Mode
+                </button>
+              </div>
+              <span class="status-indicator">● Realtime Sync</span>
+            </div>
+            
+            <div class="card-body preview-body-container">
+              <!-- WhatsApp Chat Shell -->
+              <div class="whatsapp-chat-shell" id="whatsappShell">
+                <div class="chat-header">
+                  <div class="avatar">👨‍💻</div>
+                  <div class="chat-info">
+                    <div class="chat-name" id="previewRecipientName">Work Report Chat</div>
+                    <div class="chat-status">WhatsApp Preview</div>
+                  </div>
+                </div>
+                <div class="chat-body">
+                  <div class="whatsapp-bubble">
+                    <div class="bubble-content" id="reportPreviewContent">
+                      <!-- Rendered formatted report text -->
+                    </div>
+                    <div class="bubble-timestamp" id="bubbleTime">1:18 PM ✓✓</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Slack Chat Shell -->
+              <div class="slack-chat-shell hidden" id="slackShell">
+                <div class="slack-header">
+                  <div class="slack-logo">#</div>
+                  <div class="slack-info">
+                    <div class="slack-channel-name"># daily-work-updates</div>
+                    <div class="slack-channel-status">Slack Channel Preview</div>
+                  </div>
+                </div>
+                <div class="slack-body">
+                  <div class="slack-message-bubble">
+                    <div class="slack-avatar">👤</div>
+                    <div class="slack-message-content">
+                      <div class="slack-author-name">Vamsi Krishna <span class="slack-time">1:18 PM</span></div>
+                      <div class="bubble-content" id="slackPreviewContent">
+                        <!-- Slack formatted content -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- WhatsApp Action Buttons -->
+              <div class="action-bar" id="whatsappActions">
+                <button class="btn btn-whatsapp btn-block btn-lg" id="btnSendWhatsapp">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984 0 1.763.459 3.486 1.332 5.002L2 22l5.127-1.344a9.96 9.96 0 004.881 1.27h.004c5.507 0 9.99-4.478 9.99-9.984 0-2.668-1.039-5.176-2.928-7.066A9.923 9.923 0 0012.012 2zm5.666 14.22c-.234.657-1.364 1.258-1.884 1.337-.52.079-1.196.113-1.928-.121-.444-.142-1.014-.329-1.748-.647-3.08-1.334-5.093-4.444-5.247-4.648-.154-.204-1.253-1.666-1.253-3.179 0-1.512.791-2.257 1.073-2.56.282-.303.616-.379.821-.379.205 0 .41.002.59.01.19.008.448-.073.7.531.256.604.872 2.128.948 2.281.077.153.128.334.026.538-.103.204-.154.331-.307.511-.153.18-.323.402-.461.54-.154.153-.314.321-.135.628.179.307.795 1.31 1.708 2.124 1.173 1.045 2.164 1.37 2.471 1.523.307.153.487.128.666-.077.179-.204.769-.896.974-1.203.205-.307.41-.256.692-.153.282.103 1.794.845 2.102.998.307.153.512.23.589.358.077.128.077.743-.157 1.401z"/>
+                  </svg>
+                  Send via WhatsApp
+                </button>
+                <button class="btn btn-primary btn-block" id="btnCopyReport">
+                  📋 Copy WhatsApp Format
+                </button>
+                <button class="btn btn-outline btn-block" id="btnSaveHistory">
+                  💾 Save to Local Storage History
+                </button>
+              </div>
+
+              <!-- Slack Action Buttons -->
+              <div class="action-bar hidden" id="slackActions">
+                <button class="btn btn-slack btn-block btn-lg" id="btnSendSlackWebhook">
+                  🟪 Post & Open Slack App
+                </button>
+                <button class="btn btn-primary btn-block" id="btnCopySlackReport">
+                  📋 Copy Slack Markdown Text
+                </button>
+                <button class="btn btn-outline btn-block" id="btnSaveHistorySlack">
+                  💾 Save to Local Storage History
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Saved History Modal -->
+  <div class="modal-backdrop" id="historyModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>📜 Saved Daily Work Reports</h3>
+        <button class="modal-close" id="btnCloseHistory">&times;</button>
+      </div>
+      <div class="modal-body" id="historyListContainer">
+        <!-- History items loaded here -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="btnClearHistory">🗑️ Clear History</button>
+        <button class="btn btn-secondary" id="btnCloseHistoryFooter">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+# PyInstaller & Build Outputs (Ignored to keep Git repo lightweight)
+build/
+dist/
+*.exe
+*.spec
+__pycache__/
+
+# OS & IDE Files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
