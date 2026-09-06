@@ -4,6 +4,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   // State Management
+  // State Management
   const state = {
     userName: 'Vamsi Krishna',
     userRole: 'Developer', // 'Developer' or 'Tester'
@@ -11,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     whatsappPhone: '',
     slackWebhook: '',
     previewPlatform: 'whatsapp', // 'whatsapp' or 'slack'
+    reportDate: '',
     loginTime: '07:30',
     logoutTime: '16:30',
     projects: ['InfoTech Websites', 'SmartFusion Websites'],
@@ -24,7 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
     ],
     blockers: '',
     tomorrowPlan: 'Today By EOD Planning to create at least 2 websites.',
-    history: []
+    history: [],
+    dateLogs: {},
+    contactPresets: []
   };
 
   const DEVELOPER_STATUSES = [
@@ -51,6 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const colleagueNameInput = document.getElementById('colleagueName');
   const whatsappPhoneInput = document.getElementById('whatsappPhone');
   const slackWebhookInput = document.getElementById('slackWebhook');
+  const reportDateInput = document.getElementById('reportDate');
+  const contactPresetSelect = document.getElementById('contactPresetSelect');
+  const btnSaveCurrentPreset = document.getElementById('btnSaveCurrentPreset');
+  const btnDeleteCurrentPreset = document.getElementById('btnDeleteCurrentPreset');
   
   const loginTimeInput = document.getElementById('loginTime');
   const logoutTimeInput = document.getElementById('logoutTime');
@@ -105,16 +113,325 @@ document.addEventListener('DOMContentLoaded', () => {
   const historyCountBadge = document.getElementById('historyCount');
 
   function init() {
-    setupDate();
     loadFromLocalStorage();
+    initStepperDatePopover();
+    if (!state.reportDate) {
+      state.reportDate = getTodayDateStr();
+    }
+    setupDate();
     bindEvents();
     renderAll();
   }
 
-  function setupDate() {
-    const now = new Date();
+  // Date Engine Helpers
+  const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  function getTodayDateStr() {
+    return formatDateISO(new Date());
+  }
+
+  function getYesterdayDateStr() {
+    const d = new Date();
+    d.setDate(d.getDate() - 1);
+    return formatDateISO(d);
+  }
+
+  function getNDaysAgoDateStr(n) {
+    const d = new Date();
+    d.setDate(d.getDate() - n);
+    return formatDateISO(d);
+  }
+
+  function formatDateISO(d) {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  function formatDateReadable(dateStr) {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return dateStr;
+    const d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
     const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-    currentDateBadge.textContent = `📅 ${now.toLocaleDateString('en-IN', options)}`;
+    return d.toLocaleDateString('en-IN', options);
+  }
+
+  function getRelativeDateLabel(dateStr) {
+    const today = getTodayDateStr();
+    const yesterday = getYesterdayDateStr();
+    const twoDaysAgo = getNDaysAgoDateStr(2);
+    if (dateStr === today) return 'Today';
+    if (dateStr === yesterday) return 'Yesterday';
+    if (dateStr === twoDaysAgo) return '2 Days Ago';
+    return '';
+  }
+
+  const stepperDatePopover = document.getElementById('stepperDatePopover');
+  const btnToggleDatePopover = document.getElementById('btnToggleDatePopover');
+  const btnCloseDatePopover = document.getElementById('btnCloseDatePopover');
+  const datePopoverDisplay = document.getElementById('datePopoverDisplay');
+
+  const valMonth = document.getElementById('valMonth');
+  const valDay = document.getElementById('valDay');
+  const valYear = document.getElementById('valYear');
+
+  const btnMonthUp = document.getElementById('btnMonthUp');
+  const btnMonthDown = document.getElementById('btnMonthDown');
+  const btnDayUp = document.getElementById('btnDayUp');
+  const btnDayDown = document.getElementById('btnDayDown');
+  const btnYearUp = document.getElementById('btnYearUp');
+  const btnYearDown = document.getElementById('btnYearDown');
+
+  function initStepperDatePopover() {
+    if (!stepperDatePopover) return;
+
+    if (btnToggleDatePopover) {
+      btnToggleDatePopover.addEventListener('click', (e) => {
+        e.stopPropagation();
+        syncPopoverWithDate(state.reportDate);
+        stepperDatePopover.classList.toggle('hidden');
+      });
+    }
+
+    if (btnCloseDatePopover) {
+      btnCloseDatePopover.addEventListener('click', () => {
+        stepperDatePopover.classList.add('hidden');
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      if (stepperDatePopover && !stepperDatePopover.classList.contains('hidden')) {
+        if (!stepperDatePopover.contains(e.target) && !btnToggleDatePopover.contains(e.target)) {
+          stepperDatePopover.classList.add('hidden');
+        }
+      }
+    });
+
+    const adjustDate = (yearDelta, monthDelta, dayDelta) => {
+      const parts = (state.reportDate || getTodayDateStr()).split('-');
+      let yr = parseInt(parts[0], 10);
+      let mo = parseInt(parts[1], 10) - 1;
+      let dy = parseInt(parts[2], 10);
+
+      let d = new Date(yr, mo, dy);
+      if (yearDelta !== 0) d.setFullYear(d.getFullYear() + yearDelta);
+      if (monthDelta !== 0) d.setMonth(d.getMonth() + monthDelta);
+      if (dayDelta !== 0) d.setDate(d.getDate() + dayDelta);
+
+      // Guard: No Future Dates
+      const today = new Date();
+      today.setHours(23, 59, 59, 999);
+      if (d > today) {
+        d = new Date();
+        showToast('Future dates are disabled. Clamped to Today.', 'info');
+      }
+
+      const newDateStr = formatDateISO(d);
+      if (reportDateInput) reportDateInput.value = newDateStr;
+      switchReportDate(newDateStr);
+    };
+
+    if (btnMonthUp) btnMonthUp.addEventListener('click', () => adjustDate(0, 1, 0));
+    if (btnMonthDown) btnMonthDown.addEventListener('click', () => adjustDate(0, -1, 0));
+    if (btnDayUp) btnDayUp.addEventListener('click', () => adjustDate(0, 0, 1));
+    if (btnDayDown) btnDayDown.addEventListener('click', () => adjustDate(0, 0, -1));
+    if (btnYearUp) btnYearUp.addEventListener('click', () => adjustDate(1, 0, 0));
+    if (btnYearDown) btnYearDown.addEventListener('click', () => adjustDate(-1, 0, 0));
+  }
+
+  function syncPopoverWithDate(dateStr) {
+    if (!dateStr) return;
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      const [yr, mo, dy] = parts;
+      const monthIdx = parseInt(mo, 10) - 1;
+      if (valMonth) valMonth.textContent = MONTH_NAMES[monthIdx] || mo;
+      if (valDay) valDay.textContent = dy;
+      if (valYear) valYear.textContent = yr;
+
+      const readable = formatDateReadable(dateStr);
+      if (datePopoverDisplay) datePopoverDisplay.textContent = readable || dateStr;
+
+      const todayStr = getTodayDateStr();
+      const isToday = (dateStr === todayStr);
+      if (btnDayUp) btnDayUp.disabled = isToday;
+      if (btnMonthUp) btnMonthUp.disabled = isToday;
+      if (btnYearUp) btnYearUp.disabled = isToday;
+    }
+  }
+
+  function setupDate() {
+    if (!state.reportDate) {
+      state.reportDate = getTodayDateStr();
+    }
+    const dateStr = state.reportDate;
+    const readable = formatDateReadable(dateStr);
+    const rel = getRelativeDateLabel(dateStr);
+    if (currentDateBadge) {
+      currentDateBadge.textContent = rel ? `📅 ${readable} (${rel})` : `📅 ${readable}`;
+    }
+    if (reportDateInput) {
+      reportDateInput.value = state.reportDate;
+    }
+    syncPopoverWithDate(state.reportDate);
+    updateDatePillActiveState();
+  }
+
+  function updateDatePillActiveState() {
+    document.querySelectorAll('.pill-date').forEach(pill => {
+      const action = pill.getAttribute('data-date-action');
+      if (action === 'today' && state.reportDate === getTodayDateStr()) {
+        pill.classList.add('active');
+      } else if (action === 'yesterday' && state.reportDate === getYesterdayDateStr()) {
+        pill.classList.add('active');
+      } else if (action === '2days' && state.reportDate === getNDaysAgoDateStr(2)) {
+        pill.classList.add('active');
+      } else {
+        pill.classList.remove('active');
+      }
+    });
+  }
+
+  function switchReportDate(newDateStr) {
+    if (!newDateStr || newDateStr === state.reportDate) return;
+
+    // Save current log before switching
+    saveCurrentDateLog();
+
+    // Set new date
+    state.reportDate = newDateStr;
+
+    // Load log for new date if available
+    loadDateLog(newDateStr);
+
+    // Refresh UI
+    setupDate();
+    renderProjects();
+    renderBreaks();
+    renderTasks();
+    calculateHours();
+    renderPreview();
+
+    const rel = getRelativeDateLabel(newDateStr);
+    const readable = formatDateReadable(newDateStr);
+    showToast(`Switched report date to ${readable} ${rel ? '(' + rel + ')' : ''}`, 'info');
+  }
+
+  function saveCurrentDateLog() {
+    if (!state.dateLogs) state.dateLogs = {};
+    state.dateLogs[state.reportDate] = {
+      loginTime: state.loginTime,
+      logoutTime: state.logoutTime,
+      breaks: JSON.parse(JSON.stringify(state.breaks)),
+      tasks: JSON.parse(JSON.stringify(state.tasks)),
+      blockers: state.blockers,
+      tomorrowPlan: state.tomorrowPlan
+    };
+  }
+
+  function loadDateLog(dateStr) {
+    if (state.dateLogs && state.dateLogs[dateStr]) {
+      const log = state.dateLogs[dateStr];
+      state.loginTime = log.loginTime || '07:30';
+      state.logoutTime = log.logoutTime || '16:30';
+      state.breaks = log.breaks ? JSON.parse(JSON.stringify(log.breaks)) : [];
+      state.tasks = log.tasks ? JSON.parse(JSON.stringify(log.tasks)) : [];
+      state.blockers = log.blockers || '';
+      state.tomorrowPlan = log.tomorrowPlan || '';
+    } else {
+      // Fresh log default for new date
+      state.loginTime = '07:30';
+      state.logoutTime = '16:30';
+      state.breaks = [{ id: 'b1', name: 'Lunch Break', duration: 45 }];
+      state.tasks = [];
+      state.blockers = '';
+      state.tomorrowPlan = '';
+    }
+  }
+
+  // Contact & Integration Presets Engine
+  function renderContactPresets() {
+    if (!contactPresetSelect) return;
+    const currentVal = contactPresetSelect.value;
+    contactPresetSelect.innerHTML = `<option value="">-- Select Saved Lead / Webhook Profile --</option>`;
+
+    (state.contactPresets || []).forEach(cp => {
+      const opt = document.createElement('option');
+      opt.value = cp.id;
+      let phoneLabel = cp.whatsappPhone ? ` | 📱 ${cp.whatsappPhone}` : '';
+      let slackLabel = cp.slackWebhook ? ` | 🟪 Slack Configured` : '';
+      opt.textContent = `${cp.name} (${cp.colleagueName || 'No Name'}${phoneLabel}${slackLabel})`;
+      contactPresetSelect.appendChild(opt);
+    });
+
+    if (currentVal && (state.contactPresets || []).some(p => p.id === currentVal)) {
+      contactPresetSelect.value = currentVal;
+      if (btnDeleteCurrentPreset) btnDeleteCurrentPreset.style.display = 'inline-flex';
+    } else {
+      if (btnDeleteCurrentPreset) btnDeleteCurrentPreset.style.display = 'none';
+    }
+  }
+
+  function saveCurrentPreset() {
+    const profileName = prompt('Enter a label/name for this Contact Profile (e.g. "Manager Vamsi - Slack & WhatsApp"):', state.colleagueName || 'Team Lead');
+    if (!profileName || !profileName.trim()) return;
+
+    const cleanLabel = profileName.trim();
+    if (!state.contactPresets) state.contactPresets = [];
+
+    const newPreset = {
+      id: 'cp_' + Date.now(),
+      name: cleanLabel,
+      colleagueName: state.colleagueName || '',
+      whatsappPhone: state.whatsappPhone || '',
+      slackWebhook: state.slackWebhook || ''
+    };
+
+    state.contactPresets.push(newPreset);
+    saveToLocalStorage();
+    renderContactPresets();
+    contactPresetSelect.value = newPreset.id;
+    if (btnDeleteCurrentPreset) btnDeleteCurrentPreset.style.display = 'inline-flex';
+    showToast(`Saved contact profile "${cleanLabel}"!`, 'success');
+  }
+
+  function deleteCurrentPreset() {
+    const selectedId = contactPresetSelect.value;
+    if (!selectedId) return;
+
+    const foundIdx = (state.contactPresets || []).findIndex(p => p.id === selectedId);
+    if (foundIdx !== -1) {
+      const removed = state.contactPresets.splice(foundIdx, 1);
+      saveToLocalStorage();
+      renderContactPresets();
+      contactPresetSelect.value = '';
+      if (btnDeleteCurrentPreset) btnDeleteCurrentPreset.style.display = 'none';
+      showToast(`Deleted preset "${removed[0].name}"`, 'info');
+    }
+  }
+
+  function applyContactPreset(presetId) {
+    if (!presetId) {
+      if (btnDeleteCurrentPreset) btnDeleteCurrentPreset.style.display = 'none';
+      return;
+    }
+    const preset = (state.contactPresets || []).find(p => p.id === presetId);
+    if (preset) {
+      state.colleagueName = preset.colleagueName || '';
+      state.whatsappPhone = preset.whatsappPhone || '';
+      state.slackWebhook = preset.slackWebhook || '';
+
+      colleagueNameInput.value = state.colleagueName;
+      whatsappPhoneInput.value = state.whatsappPhone;
+      slackWebhookInput.value = state.slackWebhook;
+
+      renderPreview();
+      saveToLocalStorage();
+      if (btnDeleteCurrentPreset) btnDeleteCurrentPreset.style.display = 'inline-flex';
+      showToast(`Loaded profile "${preset.name}"`, 'success');
+    }
   }
 
   // Time Engine
@@ -307,11 +624,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // WhatsApp Formatter
   function generateWhatsAppReportText() {
     const hoursData = calculateHours();
-    const todayStr = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    const reportDateStr = state.reportDate || getTodayDateStr();
+    const formattedDate = formatDateReadable(reportDateStr);
+    const relLabel = getRelativeDateLabel(reportDateStr);
+    const dateTitle = relLabel ? `${formattedDate} • ${relLabel.toUpperCase()}` : formattedDate;
     const user = state.userName.trim() ? state.userName.trim() : 'Team Member';
 
     let text = '';
-    text += `🚀 *DAILY WORK REPORT* (${todayStr})\n`;
+    text += `🚀 *DAILY WORK REPORT* (${dateTitle})\n`;
     text += `━━━━━━━━━━━━━━━━━━━━━\n`;
     text += `👤 *Name:* ${user} _(${state.userRole})_\n`;
     text += `⏰ *Shift:* ${hoursData.loginFormatted} - ${hoursData.logoutFormatted} _(${formatMinutesToHoursStr(hoursData.netWorkingMins)} Net Work)_\n`;
@@ -351,11 +671,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Slack Formatter
   function generateSlackReportText() {
     const hoursData = calculateHours();
-    const todayStr = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    const reportDateStr = state.reportDate || getTodayDateStr();
+    const formattedDate = formatDateReadable(reportDateStr);
+    const relLabel = getRelativeDateLabel(reportDateStr);
+    const dateTitle = relLabel ? `${formattedDate} • ${relLabel.toUpperCase()}` : formattedDate;
     const user = state.userName.trim() ? state.userName.trim() : 'Team Member';
 
     let text = '';
-    text += `:rocket: *DAILY WORK REPORT* (${todayStr})\n`;
+    text += `:rocket: *DAILY WORK REPORT* (${dateTitle})\n`;
     text += `──────────────────────────────────\n`;
     text += `:bust_in_silhouette: *Name:* ${user} _(${state.userRole})_\n`;
     text += `:alarm_clock: *Shift:* ${hoursData.loginFormatted} - ${hoursData.logoutFormatted} _(${formatMinutesToHoursStr(hoursData.netWorkingMins)} Net Work)_\n`;
@@ -435,17 +758,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderAll() {
+    setupDate();
     userNameInput.value = state.userName;
     userRoleSelect.value = state.userRole;
     colleagueNameInput.value = state.colleagueName;
     whatsappPhoneInput.value = state.whatsappPhone;
     slackWebhookInput.value = state.slackWebhook;
+    if (reportDateInput) reportDateInput.value = state.reportDate || getTodayDateStr();
     loginTimeInput.value = state.loginTime;
     logoutTimeInput.value = state.logoutTime;
     blockersInput.value = state.blockers;
     tomorrowPlanInput.value = state.tomorrowPlan;
 
     switchPlatformTab(state.previewPlatform);
+    renderContactPresets();
     renderProjects();
     renderBreaks();
     renderTasks();
@@ -464,7 +790,34 @@ document.addEventListener('DOMContentLoaded', () => {
     colleagueNameInput.addEventListener('input', (e) => { state.colleagueName = e.target.value; renderPreview(); });
     whatsappPhoneInput.addEventListener('input', (e) => { state.whatsappPhone = e.target.value; renderPreview(); });
     slackWebhookInput.addEventListener('input', (e) => { state.slackWebhook = e.target.value; saveToLocalStorage(); });
-    
+
+    if (contactPresetSelect) {
+      contactPresetSelect.addEventListener('change', (e) => applyContactPreset(e.target.value));
+    }
+    if (btnSaveCurrentPreset) {
+      btnSaveCurrentPreset.addEventListener('click', saveCurrentPreset);
+    }
+    if (btnDeleteCurrentPreset) {
+      btnDeleteCurrentPreset.addEventListener('click', deleteCurrentPreset);
+    }
+
+    if (reportDateInput) {
+      reportDateInput.addEventListener('change', (e) => {
+        switchReportDate(e.target.value);
+      });
+    }
+
+    if (currentDateBadge) {
+      currentDateBadge.addEventListener('click', () => {
+        if (reportDateInput) {
+          reportDateInput.focus();
+          if (typeof reportDateInput.showPicker === 'function') {
+            try { reportDateInput.showPicker(); } catch (err) {}
+          }
+        }
+      });
+    }
+
     blockersInput.addEventListener('input', (e) => { state.blockers = e.target.value; renderPreview(); });
     tomorrowPlanInput.addEventListener('input', (e) => { state.tomorrowPlan = e.target.value; renderPreview(); });
 
@@ -475,8 +828,16 @@ document.addEventListener('DOMContentLoaded', () => {
     tabWhatsapp.addEventListener('click', () => switchPlatformTab('whatsapp'));
     tabSlack.addEventListener('click', () => switchPlatformTab('slack'));
 
-    // Time Presets
+    // Time & Date Presets
     document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('pill-date')) {
+        const dateAction = e.target.getAttribute('data-date-action');
+        if (dateAction === 'today') switchReportDate(getTodayDateStr());
+        else if (dateAction === 'yesterday') switchReportDate(getYesterdayDateStr());
+        else if (dateAction === '2days') switchReportDate(getNDaysAgoDateStr(2));
+        return;
+      }
+
       if (e.target.classList.contains('pill')) {
         const targetId = e.target.getAttribute('data-target');
         const action = e.target.getAttribute('data-action');
@@ -707,11 +1068,15 @@ document.addEventListener('DOMContentLoaded', () => {
   function saveToHistory() {
     const reportText = state.previewPlatform === 'slack' ? generateSlackReportText() : generateWhatsAppReportText();
     const hoursData = calculateHours();
+    const reportDateStr = state.reportDate || getTodayDateStr();
+    const readableDate = formatDateReadable(reportDateStr);
+    const rel = getRelativeDateLabel(reportDateStr);
 
     const record = {
       id: Date.now(),
       platform: state.previewPlatform,
-      timestamp: new Date().toLocaleString('en-IN'),
+      reportDate: reportDateStr,
+      timestamp: `${readableDate}${rel ? ' (' + rel + ')' : ''}`,
       netWorking: formatMinutesToHoursStr(hoursData.netWorkingMins),
       taskCount: state.tasks.length,
       text: reportText
@@ -720,7 +1085,7 @@ document.addEventListener('DOMContentLoaded', () => {
     state.history.unshift(record);
     saveToLocalStorage();
     updateHistoryBadge();
-    showToast('💾 Saved report to Local History!', 'success');
+    showToast(`💾 Saved report for ${readableDate} to History!`, 'success');
   }
 
   function renderHistoryModal() {
@@ -736,7 +1101,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const badgeIcon = item.platform === 'slack' ? '🟪 Slack' : '💬 WhatsApp';
       card.innerHTML = `
         <div class="history-meta">
-          <span>📅 ${item.timestamp} (${badgeIcon})</span>
+          <span>📅 ${escapeHtml(item.timestamp || item.reportDate)} (${badgeIcon})</span>
           <span>⌛ ${item.netWorking} | ${item.taskCount} tasks</span>
         </div>
         <div class="history-text">${escapeHtml(item.text)}</div>
@@ -789,6 +1154,7 @@ document.addEventListener('DOMContentLoaded', () => {
     state.tasks = [{ id: 't1', title: 'Website task item', project: 'InfoTech Websites', status: 'Completed', duration: '1h' }];
     state.blockers = '';
     state.tomorrowPlan = '';
+    state.reportDate = getTodayDateStr();
     renderAll();
     showToast('Form reset to default', 'info');
   }
@@ -814,6 +1180,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Local Storage Persistence
   function saveToLocalStorage() {
     try {
+      saveCurrentDateLog();
       localStorage.setItem('smart_daily_report_v4', JSON.stringify({
         userName: state.userName,
         userRole: state.userRole,
@@ -821,6 +1188,7 @@ document.addEventListener('DOMContentLoaded', () => {
         whatsappPhone: state.whatsappPhone,
         slackWebhook: state.slackWebhook,
         previewPlatform: state.previewPlatform,
+        reportDate: state.reportDate,
         loginTime: state.loginTime,
         logoutTime: state.logoutTime,
         projects: state.projects,
@@ -828,7 +1196,9 @@ document.addEventListener('DOMContentLoaded', () => {
         tasks: state.tasks,
         blockers: state.blockers,
         tomorrowPlan: state.tomorrowPlan,
-        history: state.history
+        history: state.history,
+        dateLogs: state.dateLogs,
+        contactPresets: state.contactPresets
       }));
     } catch (e) {
       console.warn('LocalStorage save error:', e);
@@ -846,6 +1216,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (parsed.whatsappPhone !== undefined) state.whatsappPhone = parsed.whatsappPhone;
         if (parsed.slackWebhook !== undefined) state.slackWebhook = parsed.slackWebhook;
         if (parsed.previewPlatform !== undefined) state.previewPlatform = parsed.previewPlatform;
+        if (parsed.reportDate !== undefined) state.reportDate = parsed.reportDate;
         if (parsed.loginTime !== undefined) state.loginTime = parsed.loginTime;
         if (parsed.logoutTime !== undefined) state.logoutTime = parsed.logoutTime;
         if (parsed.projects !== undefined) state.projects = parsed.projects;
@@ -854,6 +1225,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (parsed.blockers !== undefined) state.blockers = parsed.blockers;
         if (parsed.tomorrowPlan !== undefined) state.tomorrowPlan = parsed.tomorrowPlan;
         if (parsed.history !== undefined) state.history = parsed.history;
+        if (parsed.dateLogs !== undefined) state.dateLogs = parsed.dateLogs;
+        if (parsed.contactPresets !== undefined) state.contactPresets = parsed.contactPresets;
       }
     } catch (e) {
       console.warn('LocalStorage load error:', e);
@@ -872,6 +1245,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function showToast(message, type = 'info') {
     const toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) return;
+    toastContainer.innerHTML = '';
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     toast.innerHTML = `<span>${message}</span>`;
@@ -882,7 +1257,7 @@ document.addEventListener('DOMContentLoaded', () => {
       toast.style.transform = 'translateY(10px)';
       toast.style.transition = 'all 0.3s ease';
       setTimeout(() => toast.remove(), 300);
-    }, 3000);
+    }, 2000);
   }
 
   init();

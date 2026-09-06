@@ -1,38 +1,1268 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Daily Work Report & WhatsApp/Slack Generator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><defs><linearGradient id='g1' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23818CF8'/><stop offset='100%' stop-color='%234F46E5'/></linearGradient><linearGradient id='g2' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%2334D399'/><stop offset='100%' stop-color='%23059669'/></linearGradient></defs><rect width='32' height='32' rx='9' fill='url(%23g1)'/><path d='M10 8C10 6.89543 10.8954 6 12 6H20C21.1046 6 22 6.89543 22 8V24C22 25.1046 21.1046 26 20 26H12C10.8954 26 10 25.1046 10 24V8Z' fill='%231E1B4B' fill-opacity='0.5'/><path d='M10 9C10 7.89543 10.8954 7 12 7H20C21.1046 7 22 7.89543 22 9V23C22 24.1046 21.1046 25 20 25H12C10.8954 25 10 24.1046 10 23V9Z' stroke='%23E0E7FF' stroke-width='1.8' stroke-linejoin='round'/><path d='M14 6H18V8H14V6Z' fill='%23E0E7FF'/><path d='M13 12H19M13 16H17' stroke='%23E0E7FF' stroke-width='1.8' stroke-linecap='round'/><path d='M18.5 17L15 22.5H19.5L18 26L23.5 19.5H19.5L21 17H18.5Z' fill='url(%23g2)'/></svg>">
-  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ==========================================================================
+   DAILY WORK REPORT & WHATSAPP/SLACK GENERATOR - MOBILE BUNDLE (V5 ICON BADGES)
+   ========================================================================== */
+
+    :root {
+      color-scheme: dark !important;
+      --bg-dark: #080C14;
+      --bg-card: rgba(15, 23, 42, 0.85);
+      --bg-card-border: rgba(255, 255, 255, 0.09);
+      --bg-input: #111827;
+      --border-color: rgba(255, 255, 255, 0.12);
+
+      --text-main: #F9FAFB;
+      --text-muted: #9CA3AF;
+      --text-dim: #6B7280;
+
+      --accent-whatsapp: #25D366;
+      --accent-whatsapp-hover: #1DA851;
+      --accent-slack: #611F69;
+      --accent-slack-hover: #4A154B;
+      --accent-primary: #6366F1;
+      --accent-primary-hover: #4F46E5;
+      --accent-emerald: #10B981;
+      --accent-amber: #F59E0B;
+      --accent-rose: #F43F5E;
+      --accent-cyan: #06B6D4;
+      --accent-purple: #8B5CF6;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+      --glass-backdrop: blur(16px);
+
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Hide scrollbars globally across all browsers & containers while keeping smooth scrolling */
+    html, body, div, section, textarea, main, .preview-body-container, .modal-body {
+      -ms-overflow-style: none !important;  /* IE and Edge */
+      scrollbar-width: none !important;  /* Firefox */
+    }
+
+    *::-webkit-scrollbar,
+    ::-webkit-scrollbar,
+    ::-webkit-scrollbar-thumb,
+    ::-webkit-scrollbar-track {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+      background: transparent !important;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-dark);
+      background-image:
+        radial-gradient(at 10% 10%, rgba(99, 102, 241, 0.2) 0px, transparent 50%),
+        radial-gradient(at 90% 90%, rgba(16, 185, 129, 0.16) 0px, transparent 50%);
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding: 14px;
+    }
+
+    .app-container {
+      max-width: 1680px;
+      margin: 0 auto;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Icon Badge Containers for High Visibility */
+    .icon-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-md);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .icon-badge.icon-indigo {
+      background: rgba(99, 102, 241, 0.2);
+      color: #818CF8;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+    }
+
+    .icon-badge.icon-cyan {
+      background: rgba(6, 182, 212, 0.2);
+      color: #22D3EE;
+      border: 1px solid rgba(6, 182, 212, 0.4);
+    }
+
+    .icon-badge.icon-purple {
+      background: rgba(139, 92, 246, 0.2);
+      color: #A78BFA;
+      border: 1px solid rgba(139, 92, 246, 0.4);
+    }
+
+    .icon-badge.icon-emerald {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34D399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .icon-badge.icon-amber {
+      background: rgba(245, 158, 11, 0.2);
+      color: #FBBF24;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+
+    .icon-badge.icon-rose {
+      background: rgba(244, 63, 94, 0.2);
+      color: #FB7185;
+      border: 1px solid rgba(244, 63, 94, 0.4);
+    }
+
+    /* Header */
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-color);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyan));
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      box-shadow: 0 0 16px rgba(99, 102, 241, 0.5);
+    }
+
+    .header-brand h1 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(to right, #FFFFFF, #D1D5DB);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .date-badge {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-color);
+      padding: 5px 12px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 600;
+      color: #E5E7EB;
+      cursor: pointer;
+    }
+
+    .date-badge:hover {
+      background: rgba(99, 102, 241, 0.2);
+      border-color: rgba(99, 102, 241, 0.5);
+      color: #818CF8;
+    }
+
+    .main-content {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 1024px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-column {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .preview-column {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      height: 100%;
+    }
+
+    .sticky-preview {
+      position: sticky;
+      top: 16px;
+      height: calc(100vh - 32px);
+      max-height: calc(100vh - 32px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .preview-card {
+      height: 100%;
+      max-height: calc(100vh - 32px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .preview-body-container {
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: var(--glass-backdrop);
+      border: 1px solid var(--bg-card-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+
+    .card.highlight-card {
+      border-color: rgba(99, 102, 241, 0.38);
+      background: linear-gradient(180deg, rgba(30, 41, 59, 0.88), rgba(15, 23, 42, 0.92));
+    }
+
+    .card-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-header.space-between {
+      justify-content: space-between;
+    }
+
+    .title-with-icon {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-header h2 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #F9FAFB;
+    }
+
+    .card-body {
+      padding: 16px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .grid-span-2 {
+      grid-column: span 2;
+    }
+
+    @media (max-width: 640px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-span-2 {
+        grid-column: span 1;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-group label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    input[type="text"],
+    input[type="tel"],
+    input[type="time"],
+    input[type="date"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 8px 12px;
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      outline: none;
+      color-scheme: dark !important;
+    }
+
+    input[type="date"],
+    input[type="time"] {
+      color-scheme: dark !important;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.8) sepia(100%) hue-rotate(190deg) saturate(300%) !important;
+      cursor: pointer;
+      opacity: 0.9;
+      padding: 4px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator:hover,
+    input[type="time"]::-webkit-calendar-picker-indicator:hover {
+      opacity: 1;
+      background: rgba(99, 102, 241, 0.3);
+      transform: scale(1.1);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+    }
+
+    /* Capsule Date Picker Widget (D M Y Pill Container matching User Drawing) */
+    .capsule-date-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .capsule-date-picker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: linear-gradient(135deg, rgba(17, 24, 39, 0.95), rgba(15, 23, 42, 0.98));
+      border: 1.5px solid rgba(99, 102, 241, 0.45);
+      border-radius: 9999px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      transition: all 0.25s ease;
+    }
+
+    .capsule-date-picker:hover {
+      border-color: rgba(99, 102, 241, 0.8);
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.35);
+    }
+
+    .capsule-circle-wrapper {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      position: relative;
+    }
+
+    .capsule-circle-select {
+      width: 42px;
+      height: 42px;
+      border-radius: 50% !important;
+      background: rgba(99, 102, 241, 0.18) !important;
+      border: 2px solid rgba(99, 102, 241, 0.5) !important;
+      color: #FFFFFF !important;
+      font-weight: 800 !important;
+      font-size: 13px !important;
+      font-family: var(--font-mono) !important;
+      text-align: center;
+      text-align-last: center;
+      padding: 0 !important;
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+      transition: all 0.2s ease;
+      color-scheme: dark !important;
+    }
+
+    .capsule-circle-select:hover,
+    .capsule-circle-select:focus {
+      background: rgba(99, 102, 241, 0.35) !important;
+      border-color: #818CF8 !important;
+      box-shadow: 0 0 14px rgba(129, 140, 248, 0.6) !important;
+      transform: scale(1.06);
+    }
+
+    .capsule-circle-select option {
+      background: #111827;
+      color: #F9FAFB;
+      font-family: var(--font-mono);
+      padding: 6px;
+    }
+
+    .capsule-label-badge {
+      font-size: 13px;
+      font-weight: 900;
+      color: #818CF8;
+      font-family: var(--font-sans);
+      letter-spacing: -0.02em;
+      user-select: none;
+      margin-right: 2px;
+    }
+
+    .capsule-dot {
+      color: var(--text-dim);
+      font-size: 12px;
+      user-select: none;
+    }
+
+    .input-with-presets {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .preset-pills {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 3px 6px;
+      border-radius: var(--radius-sm);
+      font-size: 10px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .pill.active {
+      background: rgba(99, 102, 241, 0.25);
+      border-color: var(--accent-primary);
+      color: #818CF8;
+    }
+
+    .pill:hover {
+      background: rgba(99, 102, 241, 0.25);
+      color: #FFFFFF;
+    }
+
+    .hours-summary-bar {
+      margin-top: 14px;
+      padding: 12px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .metric-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .metric-box.highlight {
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.38);
+      padding: 6px 14px;
+      border-radius: var(--radius-md);
+    }
+
+    .metric-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .metric-value {
+      font-size: 16px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+    }
+
+    .metric-divider {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-dim);
+    }
+
+    .projects-tag-list {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .project-tag {
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      color: #E0E7FF;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .project-tag .btn-remove-project {
+      cursor: pointer;
+      opacity: 0.65;
+    }
+
+    .project-tag .btn-remove-project:hover {
+      opacity: 1;
+      color: var(--accent-rose);
+    }
+
+    .dynamic-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .dynamic-item {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      padding: 10px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .break-item-grid {
+      display: grid;
+      grid-template-columns: 2fr 1.2fr 1fr 34px;
+      gap: 8px;
+      width: 100%;
+      align-items: center;
+    }
+
+    .task-item-grid {
+      display: grid;
+      grid-template-columns: 1.8fr 1.4fr 1.3fr 1.3fr 34px;
+      gap: 8px;
+      width: 100%;
+      align-items: center;
+    }
+
+    .task-duration-picker {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 4px 6px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .task-duration-picker:focus-within {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+    }
+
+    .duration-unit {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .duration-unit input[type="number"] {
+      width: 100%;
+      padding: 2px;
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+      box-shadow: none;
+    }
+
+    .duration-unit input[type="number"]:focus {
+      box-shadow: none;
+      border: none;
+    }
+
+    .duration-unit .unit-text {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+
+    @media (max-width: 768px) {
+
+      .break-item-grid,
+      .task-item-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .btn-icon-danger {
+      background: rgba(244, 63, 94, 0.12);
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      color: var(--accent-rose);
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .empty-list-notice {
+      text-align: center;
+      padding: 16px;
+      color: var(--text-dim);
+      font-size: 12px;
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius-md);
+    }
+
+    .quick-break-buttons {
+      display: flex;
+      gap: 4px;
+    }
+
+    .platform-tabs {
+      display: flex;
+      gap: 4px;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: var(--accent-primary);
+      color: #FFFFFF;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-md);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      white-space: nowrap;
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    .btn-lg {
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .btn-xs {
+      padding: 3px 8px;
+      font-size: 11px;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-primary {
+      background: var(--accent-primary);
+      color: #FFFFFF;
+    }
+
+    .btn-whatsapp {
+      background: var(--accent-whatsapp);
+      color: #042F14;
+      font-weight: 800;
+    }
+
+    .btn-slack {
+      background: var(--accent-slack);
+      color: #FFFFFF;
+      font-weight: 800;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+
+    .badge {
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .badge-info {
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+
+    .whatsapp-chat-shell {
+      background-color: #0B141A;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+    }
+
+    .chat-header {
+      background: #1F2C34;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .avatar {
+      width: 30px;
+      height: 30px;
+      background: #2A3942;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .chat-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #E9EDEF;
+    }
+
+    .chat-status {
+      font-size: 10px;
+      color: #8696A0;
+    }
+
+    .chat-body {
+      padding: 12px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .whatsapp-bubble {
+      background-color: #005C4B;
+      color: #E9EDEF;
+      padding: 12px 14px;
+      border-radius: 12px 12px 2px 12px;
+      max-width: 95%;
+    }
+
+    .slack-chat-shell {
+      background-color: #1A1D21;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+    }
+
+    .slack-header {
+      background: #121517;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .slack-logo {
+      font-size: 16px;
+      font-weight: 900;
+      color: #E8E8E8;
+    }
+
+    .slack-channel-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #D1D2D3;
+    }
+
+    .slack-channel-status {
+      font-size: 10px;
+      color: #ABADB0;
+    }
+
+    .slack-body {
+      padding: 12px;
+    }
+
+    .slack-message-bubble {
+      display: flex;
+      gap: 10px;
+      background: #222529;
+      padding: 10px;
+      border-radius: var(--radius-md);
+    }
+
+    .slack-avatar {
+      font-size: 20px;
+    }
+
+    .slack-author-name {
+      font-weight: 800;
+      font-size: 13px;
+      color: #F8F8F8;
+      margin-bottom: 2px;
+    }
+
+    .slack-time {
+      font-weight: 400;
+      font-size: 10px;
+      color: #ABADB0;
+      margin-left: 4px;
+    }
+
+    .bubble-content {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.5;
+    }
+
+    .bubble-timestamp {
+      font-size: 10px;
+      color: rgba(233, 237, 239, 0.6);
+      text-align: right;
+      margin-top: 6px;
+    }
+
+    .status-indicator {
+      font-size: 10px;
+      color: var(--accent-emerald);
+      font-weight: 600;
+    }
+
+    .action-bar {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.78);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      z-index: 999;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      background: #111827;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      width: 90%;
+      max-width: 640px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .modal-footer {
+      padding: 14px 18px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .history-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px;
+    }
+
+    .history-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .history-text {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      white-space: pre-wrap;
+      color: var(--text-main);
+      background: rgba(0, 0, 0, 0.3);
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    .history-actions {
+      margin-top: 6px;
+      display: flex;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 1000;
+    }
+
+    .toast {
+      background: #1F2937;
+      border: 1px solid var(--border-color);
+      color: #FFFFFF;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toast.success {
+      border-left: 4px solid var(--accent-emerald);
+    }
+
+    /* Inline Arrow Stepper Date Popover (No Future Dates) */
+    .date-popover-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .date-popover-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .tumbler-date-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1.5px solid rgba(99, 102, 241, 0.45);
+      border-radius: var(--radius-md);
+      color: #FFFFFF;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+      transition: all 0.25s ease;
+    }
+
+    .tumbler-date-badge:hover {
+      border-color: #818CF8;
+      background: rgba(30, 41, 59, 0.98);
+      box-shadow: 0 0 16px rgba(99, 102, 241, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .tumbler-edit-icon {
+      font-size: 12px;
+      color: #818CF8;
+      font-weight: 700;
+      font-family: var(--font-sans);
+      background: rgba(99, 102, 241, 0.2);
+      padding: 3px 8px;
+      border-radius: 9999px;
+    }
+
+    .stepper-date-popover {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      z-index: 999;
+      width: 310px;
+      background: #0F172A;
+      border: 1.5px solid rgba(99, 102, 241, 0.45);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      backdrop-filter: blur(16px);
+      animation: popoverFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .stepper-date-popover.hidden {
+      display: none !important;
+    }
+
+    @keyframes popoverFadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .popover-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #818CF8;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 8px;
+    }
+
+    .popover-close-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 18px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .popover-close-btn:hover {
+      color: #FFFFFF;
+    }
+
+    .stepper-columns-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      background: rgba(17, 24, 39, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-md);
+      padding: 10px 8px;
+    }
+
+    .stepper-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .stepper-label {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: #94A3B8;
+      letter-spacing: 0.04em;
+    }
+
+    .stepper-btn {
+      width: 38px;
+      height: 30px;
+      background: rgba(99, 102, 241, 0.18);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      color: #818CF8;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .stepper-btn:hover:not(:disabled) {
+      background: rgba(99, 102, 241, 0.4);
+      color: #FFFFFF;
+      border-color: #818CF8;
+    }
+
+    .stepper-btn:disabled {
+      opacity: 0.25;
+      cursor: not-allowed;
+      border-color: transparent;
+    }
+
+    .stepper-val-box {
+      min-width: 50px;
+      height: 38px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1.5px solid rgba(99, 102, 241, 0.5);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 800;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    .stepper-divider {
+      color: rgba(255, 255, 255, 0.25);
+      font-size: 18px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+  </style>
 </head>
+
 <body>
   <div class="app-container">
-    <!-- Top Header -->
     <header class="app-header">
       <div class="header-brand">
         <div class="brand-icon" title="Daily Work Tracker">
           <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <linearGradient id="logoGradIndex" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id="logoGradMob" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stop-color="#818CF8" />
                 <stop offset="100%" stop-color="#4F46E5" />
               </linearGradient>
-              <linearGradient id="sparkGradIndex" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id="sparkGradMob" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stop-color="#34D399" />
                 <stop offset="100%" stop-color="#059669" />
               </linearGradient>
             </defs>
-            <rect width="32" height="32" rx="9" fill="url(#logoGradIndex)" />
+            <rect width="32" height="32" rx="9" fill="url(#logoGradMob)" />
             <path d="M10 8C10 6.89543 10.8954 6 12 6H20C21.1046 6 22 6.89543 22 8V24C22 25.1046 21.1046 26 20 26H12C10.8954 26 10 25.1046 10 24V8Z" fill="#1E1B4B" fill-opacity="0.5"/>
             <path d="M10 9C10 7.89543 10.8954 7 12 7H20C21.1046 7 22 7.89543 22 9V23C22 24.1046 21.1046 25 20 25H12C10.8954 25 10 24.1046 10 23V9Z" stroke="#E0E7FF" stroke-width="1.8" stroke-linejoin="round"/>
             <path d="M14 6H18V8H14V6Z" fill="#E0E7FF"/>
             <path d="M13 12H19M13 16H17" stroke="#E0E7FF" stroke-width="1.8" stroke-linecap="round"/>
-            <path d="M18.5 17L15 22.5H19.5L18 26L23.5 19.5H19.5L21 17H18.5Z" fill="url(#sparkGradIndex)" />
+            <path d="M18.5 17L15 22.5H19.5L18 26L23.5 19.5H19.5L21 17H18.5Z" fill="url(#sparkGradMob)" />
           </svg>
         </div>
         <div>
@@ -42,35 +1272,86 @@
       </div>
       <div class="header-actions">
         <div class="date-badge" id="currentDateBadge">📅 Loading date...</div>
-        <button class="btn btn-outline" id="btnLoadSample">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-          Load Sample
-        </button>
-        <button class="btn btn-outline" id="btnResetForm">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-          Reset
-        </button>
-        <button class="btn btn-secondary" id="btnOpenHistory">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          History (<span id="historyCount">0</span>)
-        </button>
+        <button class="btn btn-outline" id="btnLoadSample">⚡ Load Sample</button>
+        <button class="btn btn-outline" id="btnResetForm">🔄 Reset</button>
+        <button class="btn btn-secondary" id="btnOpenHistory">📜 History (<span id="historyCount">0</span>)</button>
       </div>
     </header>
 
-    <!-- Main Workspace Layout -->
     <main class="main-content">
-      <!-- Left Column: Input Form Sections -->
       <div class="form-column">
-        
-        <!-- User & Role Settings Card -->
         <section class="card">
           <div class="card-header">
             <span class="icon-badge icon-indigo">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
             </span>
             <h2>Report Metadata & Integrations</h2>
           </div>
           <div class="card-body grid-2">
+            <div class="form-group grid-span-2">
+              <label style="color: #818CF8; margin-bottom: 6px; font-weight: 700;">📅 Target Report Date <small>(Select Yesterday or Past Days to view/log backdated reports)</small></label>
+
+              <div class="date-popover-row">
+                <div class="date-popover-wrapper">
+                  <!-- Trigger Badge -->
+                  <button type="button" class="tumbler-date-badge" id="btnToggleDatePopover">
+                    <span class="calendar-icon">📅</span>
+                    <span id="datePopoverDisplay">Loading Date...</span>
+                    <span class="tumbler-edit-icon">✏️ Change Date</span>
+                  </button>
+
+                  <!-- Inline Arrow Stepper Popover (Positioned Directly Below Button) -->
+                  <div class="stepper-date-popover hidden" id="stepperDatePopover">
+                    <div class="popover-header">
+                      <span>Select Target Date</span>
+                      <button type="button" class="popover-close-btn" id="btnCloseDatePopover">&times;</button>
+                    </div>
+
+                    <div class="stepper-columns-row">
+                      <!-- Month Stepper -->
+                      <div class="stepper-column">
+                        <span class="stepper-label">Month</span>
+                        <button type="button" class="stepper-btn btn-up" id="btnMonthUp" title="Next Month">▲</button>
+                        <div class="stepper-val-box" id="valMonth">Sep</div>
+                        <button type="button" class="stepper-btn btn-down" id="btnMonthDown" title="Previous Month">▼</button>
+                      </div>
+
+                      <div class="stepper-divider">/</div>
+
+                      <!-- Day Stepper -->
+                      <div class="stepper-column">
+                        <span class="stepper-label">Day</span>
+                        <button type="button" class="stepper-btn btn-up" id="btnDayUp" title="Next Day">▲</button>
+                        <div class="stepper-val-box" id="valDay">06</div>
+                        <button type="button" class="stepper-btn btn-down" id="btnDayDown" title="Previous Day">▼</button>
+                      </div>
+
+                      <div class="stepper-divider">/</div>
+
+                      <!-- Year Stepper -->
+                      <div class="stepper-column">
+                        <span class="stepper-label">Year</span>
+                        <button type="button" class="stepper-btn btn-up" id="btnYearUp" title="Next Year">▲</button>
+                        <div class="stepper-val-box" id="valYear">2026</div>
+                        <button type="button" class="stepper-btn btn-down" id="btnYearDown" title="Previous Year">▼</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Quick Date Presets -->
+                <div class="preset-pills">
+                  <button type="button" class="pill pill-date active" data-target="reportDate" data-date-action="today">Today</button>
+                  <button type="button" class="pill pill-date" data-target="reportDate" data-date-action="yesterday">Yesterday</button>
+                  <button type="button" class="pill pill-date" data-target="reportDate" data-date-action="2days">2 Days Ago</button>
+                </div>
+              </div>
+
+              <input type="hidden" id="reportDate">
+            </div>
             <div class="form-group">
               <label for="userName">Your Name / ID</label>
               <input type="text" id="userName" placeholder="e.g. Vamsi Krishna" value="Vamsi Krishna">
@@ -82,6 +1363,18 @@
                 <option value="Tester">🧪 QA / Tester Mode</option>
               </select>
             </div>
+            <div class="form-group grid-span-2" style="background: rgba(255, 255, 255, 0.03); padding: 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.08);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 8px;">
+                <label for="contactPresetSelect" style="color: #A78BFA; margin: 0; font-weight: 700;">📇 Saved Contact & Integration Presets</label>
+                <div style="display: flex; gap: 6px;">
+                  <button type="button" class="btn btn-xs btn-outline" id="btnSaveCurrentPreset" title="Save current lead name, phone, and Slack link as a preset">💾 Save Current Profile</button>
+                  <button type="button" class="btn btn-xs btn-icon-danger" id="btnDeleteCurrentPreset" title="Delete selected preset" style="display: none;">🗑️</button>
+                </div>
+              </div>
+              <select id="contactPresetSelect">
+                <option value="">-- Select Saved Lead / Webhook Profile --</option>
+              </select>
+            </div>
             <div class="form-group">
               <label for="colleagueName">Colleague / Lead Name</label>
               <input type="text" id="colleagueName" placeholder="e.g. Manager / Team Lead" value="Manager / Team Lead">
@@ -91,18 +1384,21 @@
               <input type="tel" id="whatsappPhone" placeholder="e.g. 919876543210">
             </div>
             <div class="form-group grid-span-2">
-              <label for="slackWebhook" class="text-purple">🟪 Slack Webhook URL <small>(Optional for 1-Click Channel Posting)</small></label>
+              <label for="slackWebhook" class="text-purple">🟪 Slack Webhook URL <small>(Optional for 1-Click
+                  Posting)</small></label>
               <input type="text" id="slackWebhook" placeholder="https://hooks.slack.com/services/T000/B000/XXXXXX">
             </div>
           </div>
         </section>
 
-        <!-- Shift & Hours Tracker Card -->
         <section class="card highlight-card">
           <div class="card-header space-between">
             <div class="title-with-icon">
               <span class="icon-badge icon-cyan">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
               </span>
               <h2>Work Shift & Hours Tracker</h2>
             </div>
@@ -138,7 +1434,6 @@
               </div>
             </div>
 
-            <!-- Dynamic Live Hours Counter -->
             <div class="hours-summary-bar">
               <div class="metric-box">
                 <span class="metric-label">Gross Shift</span>
@@ -158,48 +1453,52 @@
           </div>
         </section>
 
-        <!-- Primary Active Projects Card -->
         <section class="card">
           <div class="card-header space-between">
             <div class="title-with-icon">
               <span class="icon-badge icon-purple">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                </svg>
               </span>
               <h2>Active Projects</h2>
             </div>
             <button type="button" class="btn btn-xs btn-outline" id="btnAddProject">+ Add Custom Project</button>
           </div>
           <div class="card-body">
-            <div id="projectsList" class="projects-tag-list">
-              <!-- Project tags rendered here -->
-            </div>
+            <div id="projectsList" class="projects-tag-list"></div>
           </div>
         </section>
 
-        <!-- Tasks Done Card -->
         <section class="card">
           <div class="card-header space-between">
             <div class="title-with-icon">
               <span class="icon-badge icon-emerald">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M9 11l3 3L22 4" />
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                </svg>
               </span>
               <h2>Tasks Completed & Work Items</h2>
             </div>
             <button type="button" class="btn btn-primary" id="btnAddTask">+ Add Task Item</button>
           </div>
           <div class="card-body">
-            <div id="tasksList" class="dynamic-list">
-              <!-- Task items injected dynamically -->
-            </div>
+            <div id="tasksList" class="dynamic-list"></div>
           </div>
         </section>
 
-        <!-- Breaks Log Card -->
         <section class="card">
           <div class="card-header space-between">
             <div class="title-with-icon">
               <span class="icon-badge icon-amber">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                  <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" />
+                  <line x1="6" y1="1" x2="6" y2="4" />
+                  <line x1="10" y1="1" x2="10" y2="4" />
+                  <line x1="14" y1="1" x2="14" y2="4" />
+                </svg>
               </span>
               <h2>Breaks Taken</h2>
             </div>
@@ -210,52 +1509,48 @@
             </div>
           </div>
           <div class="card-body">
-            <div id="breaksList" class="dynamic-list">
-              <!-- Break items injected dynamically -->
-            </div>
+            <div id="breaksList" class="dynamic-list"></div>
           </div>
         </section>
 
-        <!-- Blockers & Tomorrow's Plan Card -->
         <section class="card">
           <div class="card-header">
             <span class="icon-badge icon-rose">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
             </span>
             <h2>Blockers & Tomorrow's Target Plan</h2>
           </div>
           <div class="card-body grid-2">
             <div class="form-group">
               <label for="blockersInput" class="text-rose">🚨 Blockers / Need Help On <small>(Optional)</small></label>
-              <textarea id="blockersInput" rows="3" placeholder="e.g. Waiting for client server credentials / API approval pending..."></textarea>
+              <textarea id="blockersInput" rows="3"
+                placeholder="e.g. Waiting for client server credentials..."></textarea>
             </div>
             <div class="form-group">
               <label for="tomorrowPlanInput" class="text-emerald">🎯 Tomorrow's Target Plan (EOD)</label>
-              <textarea id="tomorrowPlanInput" rows="3" placeholder="e.g. Today By EOD Planning to create at least 2 websites."></textarea>
+              <textarea id="tomorrowPlanInput" rows="3"
+                placeholder="e.g. Today By EOD Planning to create at least 2 websites."></textarea>
             </div>
           </div>
         </section>
       </div>
 
-      <!-- Right Column: Live WhatsApp / Slack Preview & Actions -->
       <div class="preview-column">
         <div class="sticky-preview">
           <div class="card preview-card">
-            <!-- Platform Mode Selector Tabs -->
             <div class="card-header space-between">
               <div class="platform-tabs">
-                <button type="button" class="tab-btn active" id="tabWhatsapp">
-                  💬 WhatsApp Mode
-                </button>
-                <button type="button" class="tab-btn" id="tabSlack">
-                  🟪 Slack Mode
-                </button>
+                <button type="button" class="tab-btn active" id="tabWhatsapp">💬 WhatsApp Mode</button>
+                <button type="button" class="tab-btn" id="tabSlack">🟪 Slack Mode</button>
               </div>
               <span class="status-indicator">● Realtime Sync</span>
             </div>
-            
+
             <div class="card-body preview-body-container">
-              <!-- WhatsApp Chat Shell -->
               <div class="whatsapp-chat-shell" id="whatsappShell">
                 <div class="chat-header">
                   <div class="avatar">👨‍💻</div>
@@ -266,15 +1561,12 @@
                 </div>
                 <div class="chat-body">
                   <div class="whatsapp-bubble">
-                    <div class="bubble-content" id="reportPreviewContent">
-                      <!-- Rendered formatted report text -->
-                    </div>
+                    <div class="bubble-content" id="reportPreviewContent"></div>
                     <div class="bubble-timestamp" id="bubbleTime">1:18 PM ✓✓</div>
                   </div>
                 </div>
               </div>
 
-              <!-- Slack Chat Shell -->
               <div class="slack-chat-shell hidden" id="slackShell">
                 <div class="slack-header">
                   <div class="slack-logo">#</div>
@@ -288,43 +1580,24 @@
                     <div class="slack-avatar">👤</div>
                     <div class="slack-message-content">
                       <div class="slack-author-name">Vamsi Krishna <span class="slack-time">1:18 PM</span></div>
-                      <div class="bubble-content" id="slackPreviewContent">
-                        <!-- Slack formatted content -->
-                      </div>
+                      <div class="bubble-content" id="slackPreviewContent"></div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- WhatsApp Action Buttons -->
               <div class="action-bar" id="whatsappActions">
-                <button class="btn btn-whatsapp btn-block btn-lg" id="btnSendWhatsapp">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984 0 1.763.459 3.486 1.332 5.002L2 22l5.127-1.344a9.96 9.96 0 004.881 1.27h.004c5.507 0 9.99-4.478 9.99-9.984 0-2.668-1.039-5.176-2.928-7.066A9.923 9.923 0 0012.012 2zm5.666 14.22c-.234.657-1.364 1.258-1.884 1.337-.52.079-1.196.113-1.928-.121-.444-.142-1.014-.329-1.748-.647-3.08-1.334-5.093-4.444-5.247-4.648-.154-.204-1.253-1.666-1.253-3.179 0-1.512.791-2.257 1.073-2.56.282-.303.616-.379.821-.379.205 0 .41.002.59.01.19.008.448-.073.7.531.256.604.872 2.128.948 2.281.077.153.128.334.026.538-.103.204-.154.331-.307.511-.153.18-.323.402-.461.54-.154.153-.314.321-.135.628.179.307.795 1.31 1.708 2.124 1.173 1.045 2.164 1.37 2.471 1.523.307.153.487.128.666-.077.179-.204.769-.896.974-1.203.205-.307.41-.256.692-.153.282.103 1.794.845 2.102.998.307.153.512.23.589.358.077.128.077.743-.157 1.401z"/>
-                  </svg>
-                  Send via WhatsApp
-                </button>
-                <button class="btn btn-primary btn-block" id="btnCopyReport">
-                  📋 Copy WhatsApp Format
-                </button>
-                <button class="btn btn-outline btn-block" id="btnSaveHistory">
-                  💾 Save to Local Storage History
-                </button>
+                <button class="btn btn-whatsapp btn-block btn-lg" id="btnSendWhatsapp">Send via WhatsApp</button>
+                <button class="btn btn-primary btn-block" id="btnCopyReport">📋 Copy WhatsApp Format</button>
+                <button class="btn btn-outline btn-block" id="btnSaveHistory">💾 Save to History</button>
               </div>
 
-              <!-- Slack Action Buttons -->
               <div class="action-bar hidden" id="slackActions">
-                <button class="btn btn-slack btn-block btn-lg" id="btnSendSlackWebhook">
-                  🟪 Post & Open Slack App
-                </button>
-                <button class="btn btn-primary btn-block" id="btnCopySlackReport">
-                  📋 Copy Slack Markdown Text
-                </button>
-                <button class="btn btn-outline btn-block" id="btnSaveHistorySlack">
-                  💾 Save to Local Storage History
-                </button>
+                <button class="btn btn-slack btn-block btn-lg" id="btnSendSlackWebhook">🟪 Post to Slack
+                  Channel</button>
+                <button class="btn btn-primary btn-block" id="btnCopySlackReport">📋 Copy Slack Markdown Text</button>
+                <button class="btn btn-outline btn-block" id="btnSaveHistorySlack">💾 Save to History</button>
               </div>
-
             </div>
           </div>
         </div>
@@ -332,16 +1605,13 @@
     </main>
   </div>
 
-  <!-- Saved History Modal -->
   <div class="modal-backdrop" id="historyModal">
     <div class="modal">
       <div class="modal-header">
         <h3>📜 Saved Daily Work Reports</h3>
         <button class="modal-close" id="btnCloseHistory">&times;</button>
       </div>
-      <div class="modal-body" id="historyListContainer">
-        <!-- History items loaded here -->
-      </div>
+      <div class="modal-body" id="historyListContainer"></div>
       <div class="modal-footer">
         <button class="btn btn-outline" id="btnClearHistory">🗑️ Clear History</button>
         <button class="btn btn-secondary" id="btnCloseHistoryFooter">Close</button>
@@ -349,9 +1619,900 @@
     </div>
   </div>
 
-  <!-- Toast Notification Container -->
   <div id="toastContainer" class="toast-container"></div>
 
-  <script src="app.js"></script>
+  <script>
+    /* Embedded JavaScript Application Engine */
+    document.addEventListener('DOMContentLoaded', () => {
+      const state = {
+        userName: 'Vamsi Krishna', userRole: 'Developer', colleagueName: 'Manager / Team Lead',
+        whatsappPhone: '', slackWebhook: '', previewPlatform: 'whatsapp',
+        reportDate: '',
+        loginTime: '07:30', logoutTime: '16:30',
+        projects: ['InfoTech Websites', 'SmartFusion Websites'],
+        breaks: [{ id: 'b1', name: 'Lunch Break', duration: 45 }, { id: 'b2', name: 'Tea Break', duration: 15 }],
+        tasks: [
+          { id: 't1', title: 'Assessment of the complete new InfoTech project websites', project: 'InfoTech Websites', status: 'Completed', hours: 1, minutes: 0, duration: '1h' },
+          { id: 't2', title: 'Created New GIT for all websites', project: 'InfoTech Websites', status: 'In Development', hours: 1, minutes: 0, duration: '1h' }
+        ],
+        blockers: '', tomorrowPlan: 'Today By EOD Planning to create at least 2 websites.', history: [], dateLogs: {}, contactPresets: []
+      };
+
+      const DEVELOPER_STATUSES = [
+        { label: 'Completed', icon: '🟢', slackEmoji: ':white_check_mark:' },
+        { label: 'In Development', icon: '🔵', slackEmoji: ':large_blue_circle:' },
+        { label: 'Initialized', icon: '⚡', slackEmoji: ':zap:' },
+        { label: 'In Testing', icon: '🟣', slackEmoji: ':purple_heart:' },
+        { label: 'Correcting', icon: '🟤', slackEmoji: ':warning:' },
+        { label: 'Corrected', icon: '✨', slackEmoji: ':sparkles:' },
+        { label: 'Not Started', icon: '🔴', slackEmoji: ':red_circle:' }
+      ];
+
+      const TESTER_STATUSES = [
+        { label: 'Testing Completed', icon: '🟢', slackEmoji: ':white_check_mark:' },
+        { label: 'In Testing', icon: '⚙️', slackEmoji: ':gear:' },
+        { label: 'Re-Testing', icon: '🔄', slackEmoji: ':arrows_counterclockwise:' },
+        { label: 'Rework Needed', icon: '🟤', slackEmoji: ':warning:' },
+        { label: 'Testing Not Started', icon: '🔴', slackEmoji: ':red_circle:' }
+      ];
+
+      const userNameInput = document.getElementById('userName');
+      const userRoleSelect = document.getElementById('userRole');
+      const colleagueNameInput = document.getElementById('colleagueName');
+      const whatsappPhoneInput = document.getElementById('whatsappPhone');
+      const slackWebhookInput = document.getElementById('slackWebhook');
+      const reportDateInput = document.getElementById('reportDate');
+      const contactPresetSelect = document.getElementById('contactPresetSelect');
+      const btnSaveCurrentPreset = document.getElementById('btnSaveCurrentPreset');
+      const btnDeleteCurrentPreset = document.getElementById('btnDeleteCurrentPreset');
+      const loginTimeInput = document.getElementById('loginTime');
+      const logoutTimeInput = document.getElementById('logoutTime');
+
+      const grossShiftValue = document.getElementById('grossShiftValue');
+      const totalBreaksValue = document.getElementById('totalBreaksValue');
+      const netWorkingValue = document.getElementById('netWorkingValue');
+
+      const projectsList = document.getElementById('projectsList');
+      const btnAddProject = document.getElementById('btnAddProject');
+      const tasksList = document.getElementById('tasksList');
+      const breaksList = document.getElementById('breaksList');
+      const blockersInput = document.getElementById('blockersInput');
+      const tomorrowPlanInput = document.getElementById('tomorrowPlanInput');
+
+      const tabWhatsapp = document.getElementById('tabWhatsapp');
+      const tabSlack = document.getElementById('tabSlack');
+      const whatsappShell = document.getElementById('whatsappShell');
+      const slackShell = document.getElementById('slackShell');
+      const whatsappActions = document.getElementById('whatsappActions');
+      const slackActions = document.getElementById('slackActions');
+
+      const reportPreviewContent = document.getElementById('reportPreviewContent');
+      const slackPreviewContent = document.getElementById('slackPreviewContent');
+      const previewRecipientName = document.getElementById('previewRecipientName');
+      const currentDateBadge = document.getElementById('currentDateBadge');
+
+      const btnSendWhatsapp = document.getElementById('btnSendWhatsapp');
+      const btnCopyReport = document.getElementById('btnCopyReport');
+      const btnSendSlackWebhook = document.getElementById('btnSendSlackWebhook');
+      const btnCopySlackReport = document.getElementById('btnCopySlackReport');
+      const btnSaveHistory = document.getElementById('btnSaveHistory');
+      const btnSaveHistorySlack = document.getElementById('btnSaveHistorySlack');
+      const btnResetForm = document.getElementById('btnResetForm');
+      const btnLoadSample = document.getElementById('btnLoadSample');
+
+      const btnAddBreak = document.getElementById('btnAddBreak');
+      const btnQuickLunch = document.getElementById('btnQuickLunch');
+      const btnQuickTea = document.getElementById('btnQuickTea');
+      const btnAddTask = document.getElementById('btnAddTask');
+
+      const historyModal = document.getElementById('historyModal');
+      const btnOpenHistory = document.getElementById('btnOpenHistory');
+      const btnCloseHistory = document.getElementById('btnCloseHistory');
+      const btnCloseHistoryFooter = document.getElementById('btnCloseHistoryFooter');
+      const btnClearHistory = document.getElementById('btnClearHistory');
+      const historyListContainer = document.getElementById('historyListContainer');
+      const historyCountBadge = document.getElementById('historyCount');
+
+      const btnToggleDatePopover = document.getElementById('btnToggleDatePopover');
+      const stepperDatePopover = document.getElementById('stepperDatePopover');
+      const btnCloseDatePopover = document.getElementById('btnCloseDatePopover');
+      const datePopoverDisplay = document.getElementById('datePopoverDisplay');
+
+      const valMonth = document.getElementById('valMonth');
+      const valDay = document.getElementById('valDay');
+      const valYear = document.getElementById('valYear');
+
+      const btnMonthUp = document.getElementById('btnMonthUp');
+      const btnMonthDown = document.getElementById('btnMonthDown');
+      const btnDayUp = document.getElementById('btnDayUp');
+      const btnDayDown = document.getElementById('btnDayDown');
+      const btnYearUp = document.getElementById('btnYearUp');
+      const btnYearDown = document.getElementById('btnYearDown');
+
+      const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+      function init() {
+        loadFromLocalStorage();
+        initStepperDatePopover();
+        if (!state.reportDate) state.reportDate = getTodayDateStr();
+        setupDate(); bindEvents(); renderAll();
+      }
+
+      function initStepperDatePopover() {
+        if (!stepperDatePopover) return;
+
+        if (btnToggleDatePopover) {
+          btnToggleDatePopover.addEventListener('click', (e) => {
+            e.stopPropagation();
+            syncPopoverWithDate(state.reportDate);
+            stepperDatePopover.classList.toggle('hidden');
+          });
+        }
+
+        if (btnCloseDatePopover) {
+          btnCloseDatePopover.addEventListener('click', () => {
+            stepperDatePopover.classList.add('hidden');
+          });
+        }
+
+        document.addEventListener('click', (e) => {
+          if (stepperDatePopover && !stepperDatePopover.classList.contains('hidden')) {
+            if (!stepperDatePopover.contains(e.target) && !btnToggleDatePopover.contains(e.target)) {
+              stepperDatePopover.classList.add('hidden');
+            }
+          }
+        });
+
+        const adjustDate = (yearDelta, monthDelta, dayDelta) => {
+          const parts = (state.reportDate || getTodayDateStr()).split('-');
+          let yr = parseInt(parts[0], 10);
+          let mo = parseInt(parts[1], 10) - 1;
+          let dy = parseInt(parts[2], 10);
+
+          let d = new Date(yr, mo, dy);
+          if (yearDelta !== 0) d.setFullYear(d.getFullYear() + yearDelta);
+          if (monthDelta !== 0) d.setMonth(d.getMonth() + monthDelta);
+          if (dayDelta !== 0) d.setDate(d.getDate() + dayDelta);
+
+          // Guard: No Future Dates
+          const today = new Date();
+          today.setHours(23, 59, 59, 999);
+          if (d > today) {
+            d = new Date();
+            showToast('Future dates are disabled. Clamped to Today.', 'info');
+          }
+
+          const newDateStr = formatDateISO(d);
+          if (reportDateInput) reportDateInput.value = newDateStr;
+          switchReportDate(newDateStr);
+        };
+
+        if (btnMonthUp) btnMonthUp.addEventListener('click', () => adjustDate(0, 1, 0));
+        if (btnMonthDown) btnMonthDown.addEventListener('click', () => adjustDate(0, -1, 0));
+        if (btnDayUp) btnDayUp.addEventListener('click', () => adjustDate(0, 0, 1));
+        if (btnDayDown) btnDayDown.addEventListener('click', () => adjustDate(0, 0, -1));
+        if (btnYearUp) btnYearUp.addEventListener('click', () => adjustDate(1, 0, 0));
+        if (btnYearDown) btnYearDown.addEventListener('click', () => adjustDate(-1, 0, 0));
+      }
+
+      function syncPopoverWithDate(dateStr) {
+        if (!dateStr) return;
+        const parts = dateStr.split('-');
+        if (parts.length === 3) {
+          const [yr, mo, dy] = parts;
+          const monthIdx = parseInt(mo, 10) - 1;
+          if (valMonth) valMonth.textContent = MONTH_NAMES[monthIdx] || mo;
+          if (valDay) valDay.textContent = dy;
+          if (valYear) valYear.textContent = yr;
+
+          const readable = formatDateReadable(dateStr);
+          if (datePopoverDisplay) datePopoverDisplay.textContent = readable || dateStr;
+
+          const todayStr = getTodayDateStr();
+          const isToday = (dateStr === todayStr);
+          if (btnDayUp) btnDayUp.disabled = isToday;
+          if (btnMonthUp) btnMonthUp.disabled = isToday;
+          if (btnYearUp) btnYearUp.disabled = isToday;
+        }
+      }
+
+      function getTodayDateStr() { return formatDateISO(new Date()); }
+      function getYesterdayDateStr() { const d = new Date(); d.setDate(d.getDate() - 1); return formatDateISO(d); }
+      function getNDaysAgoDateStr(n) { const d = new Date(); d.setDate(d.getDate() - n); return formatDateISO(d); }
+      function formatDateISO(d) {
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      }
+      function formatDateReadable(dateStr) {
+        if (!dateStr) return '';
+        const parts = dateStr.split('-');
+        if (parts.length !== 3) return dateStr;
+        const d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+        return d.toLocaleDateString('en-IN', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+      }
+      function getRelativeDateLabel(dateStr) {
+        if (dateStr === getTodayDateStr()) return 'Today';
+        if (dateStr === getYesterdayDateStr()) return 'Yesterday';
+        if (dateStr === getNDaysAgoDateStr(2)) return '2 Days Ago';
+        return '';
+      }
+
+      function setupDate() {
+        if (!state.reportDate) state.reportDate = getTodayDateStr();
+        const readable = formatDateReadable(state.reportDate);
+        const rel = getRelativeDateLabel(state.reportDate);
+        if (currentDateBadge) currentDateBadge.textContent = rel ? `📅 ${readable} (${rel})` : `📅 ${readable}`;
+        if (reportDateInput) reportDateInput.value = state.reportDate;
+        syncPopoverWithDate(state.reportDate);
+        updateDatePillActiveState();
+      }
+
+      function updateDatePillActiveState() {
+        document.querySelectorAll('.pill-date').forEach(pill => {
+          const action = pill.getAttribute('data-date-action');
+          if (action === 'today' && state.reportDate === getTodayDateStr()) pill.classList.add('active');
+          else if (action === 'yesterday' && state.reportDate === getYesterdayDateStr()) pill.classList.add('active');
+          else if (action === '2days' && state.reportDate === getNDaysAgoDateStr(2)) pill.classList.add('active');
+          else pill.classList.remove('active');
+        });
+      }
+
+      function switchReportDate(newDateStr) {
+        if (!newDateStr || newDateStr === state.reportDate) return;
+        saveCurrentDateLog();
+        state.reportDate = newDateStr;
+        loadDateLog(newDateStr);
+        setupDate(); renderProjects(); renderBreaks(); renderTasks(); calculateHours(); renderPreview();
+        const rel = getRelativeDateLabel(newDateStr);
+        const readable = formatDateReadable(newDateStr);
+        showToast(`Switched report date to ${readable} ${rel ? '(' + rel + ')' : ''}`, 'info');
+      }
+
+      function saveCurrentDateLog() {
+        if (!state.dateLogs) state.dateLogs = {};
+        state.dateLogs[state.reportDate] = {
+          loginTime: state.loginTime, logoutTime: state.logoutTime,
+          breaks: JSON.parse(JSON.stringify(state.breaks)),
+          tasks: JSON.parse(JSON.stringify(state.tasks)),
+          blockers: state.blockers, tomorrowPlan: state.tomorrowPlan
+        };
+      }
+
+      function loadDateLog(dateStr) {
+        if (state.dateLogs && state.dateLogs[dateStr]) {
+          const log = state.dateLogs[dateStr];
+          state.loginTime = log.loginTime || '07:30'; state.logoutTime = log.logoutTime || '16:30';
+          state.breaks = log.breaks ? JSON.parse(JSON.stringify(log.breaks)) : [];
+          state.tasks = log.tasks ? JSON.parse(JSON.stringify(log.tasks)) : [];
+          state.blockers = log.blockers || ''; state.tomorrowPlan = log.tomorrowPlan || '';
+        } else {
+          state.loginTime = '07:30'; state.logoutTime = '16:30';
+          state.breaks = [{ id: 'b1', name: 'Lunch Break', duration: 45 }];
+          state.tasks = []; state.blockers = ''; state.tomorrowPlan = '';
+        }
+      }
+
+      function renderContactPresets() {
+        if (!contactPresetSelect) return;
+        const currentVal = contactPresetSelect.value;
+        contactPresetSelect.innerHTML = `<option value="">-- Select Saved Lead / Webhook Profile --</option>`;
+
+        (state.contactPresets || []).forEach(cp => {
+          const opt = document.createElement('option');
+          opt.value = cp.id;
+          let phoneLabel = cp.whatsappPhone ? ` | 📱 ${cp.whatsappPhone}` : '';
+          let slackLabel = cp.slackWebhook ? ` | 🟪 Slack Configured` : '';
+          opt.textContent = `${cp.name} (${cp.colleagueName || 'No Name'}${phoneLabel}${slackLabel})`;
+          contactPresetSelect.appendChild(opt);
+        });
+
+        if (currentVal && (state.contactPresets || []).some(p => p.id === currentVal)) {
+          contactPresetSelect.value = currentVal;
+          if (btnDeleteCurrentPreset) btnDeleteCurrentPreset.style.display = 'inline-flex';
+        } else {
+          if (btnDeleteCurrentPreset) btnDeleteCurrentPreset.style.display = 'none';
+        }
+      }
+
+      function saveCurrentPreset() {
+        const profileName = prompt('Enter a label/name for this Contact Profile (e.g. "Manager Vamsi - Slack & WhatsApp"):', state.colleagueName || 'Team Lead');
+        if (!profileName || !profileName.trim()) return;
+
+        const cleanLabel = profileName.trim();
+        if (!state.contactPresets) state.contactPresets = [];
+
+        const newPreset = {
+          id: 'cp_' + Date.now(),
+          name: cleanLabel,
+          colleagueName: state.colleagueName || '',
+          whatsappPhone: state.whatsappPhone || '',
+          slackWebhook: state.slackWebhook || ''
+        };
+
+        state.contactPresets.push(newPreset);
+        saveToLocalStorage();
+        renderContactPresets();
+        contactPresetSelect.value = newPreset.id;
+        if (btnDeleteCurrentPreset) btnDeleteCurrentPreset.style.display = 'inline-flex';
+        showToast(`Saved contact profile "${cleanLabel}"!`, 'success');
+      }
+
+      function deleteCurrentPreset() {
+        const selectedId = contactPresetSelect.value;
+        if (!selectedId) return;
+
+        const foundIdx = (state.contactPresets || []).findIndex(p => p.id === selectedId);
+        if (foundIdx !== -1) {
+          const removed = state.contactPresets.splice(foundIdx, 1);
+          saveToLocalStorage();
+          renderContactPresets();
+          contactPresetSelect.value = '';
+          if (btnDeleteCurrentPreset) btnDeleteCurrentPreset.style.display = 'none';
+          showToast(`Deleted preset "${removed[0].name}"`, 'info');
+        }
+      }
+
+      function applyContactPreset(presetId) {
+        if (!presetId) {
+          if (btnDeleteCurrentPreset) btnDeleteCurrentPreset.style.display = 'none';
+          return;
+        }
+        const preset = (state.contactPresets || []).find(p => p.id === presetId);
+        if (preset) {
+          state.colleagueName = preset.colleagueName || '';
+          state.whatsappPhone = preset.whatsappPhone || '';
+          state.slackWebhook = preset.slackWebhook || '';
+
+          colleagueNameInput.value = state.colleagueName;
+          whatsappPhoneInput.value = state.whatsappPhone;
+          slackWebhookInput.value = state.slackWebhook;
+
+          renderPreview();
+          saveToLocalStorage();
+          if (btnDeleteCurrentPreset) btnDeleteCurrentPreset.style.display = 'inline-flex';
+          showToast(`Loaded profile "${preset.name}"`, 'success');
+        }
+      }
+
+      function calculateHours() {
+        const loginStr = loginTimeInput.value || '07:30';
+        const logoutStr = logoutTimeInput.value || '16:30';
+        const loginMins = timeStrToMinutes(loginStr);
+        let logoutMins = timeStrToMinutes(logoutStr);
+        if (logoutMins < loginMins) logoutMins += 24 * 60;
+
+        const grossShiftMins = Math.max(0, logoutMins - loginMins);
+        const totalBreakMins = state.breaks.reduce((acc, curr) => acc + (parseInt(curr.duration) || 0), 0);
+        const netWorkingMins = Math.max(0, grossShiftMins - totalBreakMins);
+
+        grossShiftValue.textContent = formatMinutesToHoursStr(grossShiftMins);
+        totalBreaksValue.textContent = formatMinutesToHoursStr(totalBreakMins);
+        netWorkingValue.textContent = formatMinutesToHoursStr(netWorkingMins);
+
+        return {
+          grossShiftMins, totalBreakMins, netWorkingMins,
+          loginFormatted: format12Hour(loginStr), logoutFormatted: format12Hour(logoutStr)
+        };
+      }
+
+      function timeStrToMinutes(timeStr) {
+        if (!timeStr) return 0;
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        return (hours * 60) + minutes;
+      }
+
+      function formatMinutesToHoursStr(totalMinutes) {
+        const hrs = Math.floor(totalMinutes / 60);
+        const mins = totalMinutes % 60;
+        if (hrs === 0) return `${mins} mins`;
+        if (mins === 0) return `${hrs} hrs`;
+        return `${hrs} hrs ${mins} mins`;
+      }
+
+      function format12Hour(time24) {
+        if (!time24) return '';
+        let [hours, minutes] = time24.split(':').map(Number);
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12; hours = hours ? hours : 12;
+        return `${hours}:${minutes < 10 ? '0' + minutes : minutes} ${ampm}`;
+      }
+
+      function renderProjects() {
+        projectsList.innerHTML = '';
+        state.projects.forEach((proj, idx) => {
+          const tag = document.createElement('div');
+          tag.className = 'project-tag';
+          tag.innerHTML = `📁 ${escapeHtml(proj)} <span class="btn-remove-project" data-index="${idx}">&times;</span>`;
+          projectsList.appendChild(tag);
+        });
+      }
+
+      function renderBreaks() {
+        breaksList.innerHTML = '';
+        if (state.breaks.length === 0) {
+          breaksList.innerHTML = `<div class="empty-list-notice">No breaks taken.</div>`; return;
+        }
+        state.breaks.forEach((b, index) => {
+          const div = document.createElement('div');
+          div.className = 'dynamic-item';
+          div.innerHTML = `
+        <div class="break-item-grid">
+          <input type="text" value="${escapeHtml(b.name)}" placeholder="Break Name" data-index="${index}" data-field="name">
+          <div style="display:flex; align-items:center; gap:4px;">
+            <input type="number" value="${b.duration}" min="0" data-index="${index}" data-field="duration">
+            <span style="font-size:11px; color:var(--text-muted);">mins</span>
+          </div>
+          <span style="font-size:11px; color:var(--accent-amber); font-weight:600;">☕ ${b.duration || 0}m</span>
+          <button class="btn-icon-danger btn-delete-break" data-index="${index}">&times;</button>
+        </div>`;
+          breaksList.appendChild(div);
+        });
+      }
+
+      function getStatusObj(statusLabel) {
+        const allStatuses = [...DEVELOPER_STATUSES, ...TESTER_STATUSES];
+        const upper = (statusLabel || '').toUpperCase();
+        const match = allStatuses.find(s => s.label.toUpperCase() === upper);
+        if (match) return match;
+        if (upper === 'CREATING') return DEVELOPER_STATUSES.find(s => s.label === 'In Development') || DEVELOPER_STATUSES[1];
+        if (upper === 'REWORK') return DEVELOPER_STATUSES.find(s => s.label === 'Correcting') || DEVELOPER_STATUSES[4];
+        return { label: statusLabel || 'Completed', icon: '🔹', slackEmoji: ':white_check_mark:' };
+      }
+
+      function getTaskHours(t) {
+        if (t.hours !== undefined && t.hours !== null && t.hours !== '') return parseInt(t.hours) || 0;
+        const str = (t.duration || '').trim().toLowerCase();
+        const hMatch = str.match(/(\d+(?:\.\d+)?)\s*h/);
+        if (hMatch) return Math.floor(parseFloat(hMatch[1]) || 0);
+        if (!str.includes('m') && !isNaN(parseFloat(str))) return Math.floor(parseFloat(str) || 0);
+        return 0;
+      }
+
+      function getTaskMinutes(t) {
+        if (t.minutes !== undefined && t.minutes !== null && t.minutes !== '') return parseInt(t.minutes) || 0;
+        const str = (t.duration || '').trim().toLowerCase();
+        const mMatch = str.match(/(\d+)\s*m/);
+        if (mMatch) return parseInt(mMatch[1]) || 0;
+        const hMatch = str.match(/(\d+\.(\d+))\s*h/);
+        if (hMatch) return Math.round((parseFloat(hMatch[1]) % 1) * 60);
+        return 0;
+      }
+
+      function getFormattedTaskDuration(t) {
+        const hrs = getTaskHours(t);
+        const mins = getTaskMinutes(t);
+        if (hrs > 0 && mins > 0) return `${hrs}h ${mins}m`;
+        if (hrs > 0) return `${hrs}h`;
+        if (mins > 0) return `${mins}m`;
+        if (t.duration && t.duration.trim()) return t.duration.trim();
+        return '';
+      }
+
+      function renderTasks() {
+        tasksList.innerHTML = '';
+        if (state.tasks.length === 0) {
+          tasksList.innerHTML = `<div class="empty-list-notice">No tasks added yet. Click "+ Add Task Item"</div>`; return;
+        }
+        const availableStatuses = state.userRole === 'Tester' ? TESTER_STATUSES : DEVELOPER_STATUSES;
+
+        state.tasks.forEach((t, index) => {
+          let projectOptionsHtml = state.projects.map(p => `<option value="${escapeHtml(p)}" ${t.project === p ? 'selected' : ''}>📁 ${escapeHtml(p)}</option>`).join('');
+          let statusOptionsHtml = availableStatuses.map(s => `<option value="${escapeHtml(s.label)}" ${t.status === s.label ? 'selected' : ''}>${s.icon} ${escapeHtml(s.label)}</option>`).join('');
+
+          const div = document.createElement('div');
+          div.className = 'dynamic-item';
+          div.innerHTML = `
+        <div class="task-item-grid">
+          <input type="text" value="${escapeHtml(t.title)}" placeholder="Task description..." data-index="${index}" data-field="title">
+          <select data-index="${index}" data-field="project">${projectOptionsHtml}</select>
+          <select data-index="${index}" data-field="status">${statusOptionsHtml}</select>
+          <div class="task-duration-picker" title="Task duration in hours and minutes">
+            <div class="duration-unit">
+              <input type="number" min="0" max="24" value="${getTaskHours(t)}" placeholder="0" data-index="${index}" data-field="hours">
+              <span class="unit-text">h</span>
+            </div>
+            <div class="duration-unit">
+              <input type="number" min="0" max="59" value="${getTaskMinutes(t)}" placeholder="0" data-index="${index}" data-field="minutes">
+              <span class="unit-text">m</span>
+            </div>
+          </div>
+          <button class="btn-icon-danger btn-delete-task" data-index="${index}">&times;</button>
+        </div>`;
+          tasksList.appendChild(div);
+        });
+      }
+
+      function generateWhatsAppReportText() {
+        const hoursData = calculateHours();
+        const reportDateStr = state.reportDate || getTodayDateStr();
+        const formattedDate = formatDateReadable(reportDateStr);
+        const relLabel = getRelativeDateLabel(reportDateStr);
+        const dateTitle = relLabel ? `${formattedDate} • ${relLabel.toUpperCase()}` : formattedDate;
+        let text = `🚀 *DAILY WORK REPORT* (${dateTitle})\n━━━━━━━━━━━━━━━━━━━━━\n👤 *Name:* ${state.userName} _(${state.userRole})_\n⏰ *Shift:* ${hoursData.loginFormatted} - ${hoursData.logoutFormatted} _(${formatMinutesToHoursStr(hoursData.netWorkingMins)} Net Work)_\n☕ *Breaks:* ${formatMinutesToHoursStr(hoursData.totalBreakMins)}\n━━━━━━━━━━━━━━━━━━━━━\n\n📋 *TASKS DONE:*\n`;
+
+        const projectGroups = {};
+        state.tasks.forEach(t => {
+          const projKey = t.project || 'InfoTech Websites';
+          if (!projectGroups[projKey]) projectGroups[projKey] = [];
+          projectGroups[projKey].push(t);
+        });
+
+        Object.keys(projectGroups).forEach(proj => {
+          text += `\n📁 *PROJECT: ${proj}*\n`;
+          projectGroups[proj].forEach(t => {
+            const sObj = getStatusObj(t.status);
+            const durStr = getFormattedTaskDuration(t);
+            text += `${sObj.icon} *[${t.status}]* ${t.title}${durStr ? ` _(${durStr})_` : ''}\n`;
+          });
+        });
+
+        if (state.blockers.trim()) text += `\n🚨 *BLOCKERS / PENDING:*\n${state.blockers.trim()}\n`;
+        if (state.tomorrowPlan.trim()) text += `\n📌 *Notes / Next Targets:* ${state.tomorrowPlan.trim()}\n`;
+        return text + `\nThank you! 🙏`;
+      }
+
+      function generateSlackReportText() {
+        const hoursData = calculateHours();
+        const reportDateStr = state.reportDate || getTodayDateStr();
+        const formattedDate = formatDateReadable(reportDateStr);
+        const relLabel = getRelativeDateLabel(reportDateStr);
+        const dateTitle = relLabel ? `${formattedDate} • ${relLabel.toUpperCase()}` : formattedDate;
+        let text = `:rocket: *DAILY WORK REPORT* (${dateTitle})\n──────────────────────────────────\n:bust_in_silhouette: *Name:* ${state.userName} _(${state.userRole})_\n:alarm_clock: *Shift:* ${hoursData.loginFormatted} - ${hoursData.logoutFormatted} _(${formatMinutesToHoursStr(hoursData.netWorkingMins)} Net Work)_\n:coffee: *Breaks:* ${formatMinutesToHoursStr(hoursData.totalBreakMins)}\n──────────────────────────────────\n\n:clipboard: *TASKS DONE:*\n`;
+
+        const projectGroups = {};
+        state.tasks.forEach(t => {
+          const projKey = t.project || 'InfoTech Websites';
+          if (!projectGroups[projKey]) projectGroups[projKey] = [];
+          projectGroups[projKey].push(t);
+        });
+
+        Object.keys(projectGroups).forEach(proj => {
+          text += `\n:file_folder: *PROJECT: ${proj}*\n`;
+          projectGroups[proj].forEach(t => {
+            const sObj = getStatusObj(t.status);
+            const durStr = getFormattedTaskDuration(t);
+            text += `${sObj.slackEmoji} *[${t.status}]* ${t.title}${durStr ? ` _(${durStr})_` : ''}\n`;
+          });
+        });
+
+        if (state.blockers.trim()) text += `\n:warning: *BLOCKERS / PENDING:*\n${state.blockers.trim()}\n`;
+        if (state.tomorrowPlan.trim()) text += `\n:dart: *Notes / Next Targets:* ${state.tomorrowPlan.trim()}\n`;
+        return text + `\nThank you! :pray:`;
+      }
+
+      function renderPreview() {
+        reportPreviewContent.innerHTML = escapeHtml(generateWhatsAppReportText()).replace(/\*(.*?)\*/g, '<strong>$1</strong>').replace(/_(.*?)_/g, '<em>$1</em>');
+        slackPreviewContent.innerHTML = escapeHtml(generateSlackReportText()).replace(/\*(.*?)\*/g, '<strong>$1</strong>').replace(/_(.*?)_/g, '<em>$1</em>');
+        previewRecipientName.textContent = state.colleagueName.trim() ? `Report to: ${state.colleagueName}` : 'Work Report Chat';
+        saveToLocalStorage();
+      }
+
+      function switchPlatformTab(platform) {
+        state.previewPlatform = platform;
+        if (platform === 'slack') {
+          tabSlack.classList.add('active'); tabWhatsapp.classList.remove('active');
+          slackShell.classList.remove('hidden'); whatsappShell.classList.add('hidden');
+          slackActions.classList.remove('hidden'); whatsappActions.classList.add('hidden');
+        } else {
+          tabWhatsapp.classList.add('active'); tabSlack.classList.remove('active');
+          whatsappShell.classList.remove('hidden'); slackShell.classList.add('hidden');
+          whatsappActions.classList.remove('hidden'); slackActions.classList.add('hidden');
+        }
+      }
+
+      function renderAll() {
+        setupDate();
+        userNameInput.value = state.userName; userRoleSelect.value = state.userRole;
+        colleagueNameInput.value = state.colleagueName; whatsappPhoneInput.value = state.whatsappPhone;
+        slackWebhookInput.value = state.slackWebhook;
+        if (reportDateInput) reportDateInput.value = state.reportDate || getTodayDateStr();
+        loginTimeInput.value = state.loginTime;
+        logoutTimeInput.value = state.logoutTime; blockersInput.value = state.blockers;
+        tomorrowPlanInput.value = state.tomorrowPlan;
+        switchPlatformTab(state.previewPlatform); renderContactPresets(); renderProjects(); renderBreaks(); renderTasks(); calculateHours(); renderPreview(); updateHistoryBadge();
+      }
+
+      function bindEvents() {
+        userNameInput.addEventListener('input', (e) => { state.userName = e.target.value; renderPreview(); });
+        userRoleSelect.addEventListener('change', (e) => { state.userRole = e.target.value; renderTasks(); renderPreview(); });
+        colleagueNameInput.addEventListener('input', (e) => { state.colleagueName = e.target.value; renderPreview(); });
+        whatsappPhoneInput.addEventListener('input', (e) => { state.whatsappPhone = e.target.value; renderPreview(); });
+        slackWebhookInput.addEventListener('input', (e) => { state.slackWebhook = e.target.value; saveToLocalStorage(); });
+
+        if (contactPresetSelect) {
+          contactPresetSelect.addEventListener('change', (e) => applyContactPreset(e.target.value));
+        }
+        if (btnSaveCurrentPreset) {
+          btnSaveCurrentPreset.addEventListener('click', saveCurrentPreset);
+        }
+        if (btnDeleteCurrentPreset) {
+          btnDeleteCurrentPreset.addEventListener('click', deleteCurrentPreset);
+        }
+
+        if (reportDateInput) {
+          reportDateInput.addEventListener('change', (e) => switchReportDate(e.target.value));
+        }
+
+        if (currentDateBadge) {
+          currentDateBadge.addEventListener('click', () => {
+            if (reportDateInput) {
+              reportDateInput.focus();
+              if (typeof reportDateInput.showPicker === 'function') { try { reportDateInput.showPicker(); } catch(err) {} }
+            }
+          });
+        }
+
+        blockersInput.addEventListener('input', (e) => { state.blockers = e.target.value; renderPreview(); });
+        tomorrowPlanInput.addEventListener('input', (e) => { state.tomorrowPlan = e.target.value; renderPreview(); });
+
+        loginTimeInput.addEventListener('input', (e) => { state.loginTime = e.target.value; calculateHours(); renderPreview(); });
+        logoutTimeInput.addEventListener('input', (e) => { state.logoutTime = e.target.value; calculateHours(); renderPreview(); });
+
+        tabWhatsapp.addEventListener('click', () => switchPlatformTab('whatsapp'));
+        tabSlack.addEventListener('click', () => switchPlatformTab('slack'));
+
+        document.addEventListener('click', (e) => {
+          if (e.target.classList.contains('pill-date')) {
+            const dateAction = e.target.getAttribute('data-date-action');
+            if (dateAction === 'today') switchReportDate(getTodayDateStr());
+            else if (dateAction === 'yesterday') switchReportDate(getYesterdayDateStr());
+            else if (dateAction === '2days') switchReportDate(getNDaysAgoDateStr(2));
+            return;
+          }
+
+          if (e.target.classList.contains('pill')) {
+            const targetId = e.target.getAttribute('data-target');
+            const action = e.target.getAttribute('data-action');
+            const timeVal = e.target.getAttribute('data-time');
+            const inputElem = document.getElementById(targetId);
+            if (inputElem) {
+              if (action === 'now') {
+                const now = new Date();
+                inputElem.value = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+              } else if (timeVal) inputElem.value = timeVal;
+              if (targetId === 'loginTime') state.loginTime = inputElem.value;
+              if (targetId === 'logoutTime') state.logoutTime = inputElem.value;
+              calculateHours(); renderPreview();
+            }
+          }
+        });
+
+        btnAddProject.addEventListener('click', () => {
+          const projName = prompt('Enter New Project Name:');
+          if (projName && projName.trim()) {
+            const cleanName = projName.trim();
+            if (!state.projects.includes(cleanName)) {
+              state.projects.push(cleanName); renderProjects(); renderTasks(); renderPreview(); showToast(`Project "${cleanName}" added`, 'success');
+            }
+          }
+        });
+
+        projectsList.addEventListener('click', (e) => {
+          if (e.target.classList.contains('btn-remove-project')) {
+            const idx = e.target.getAttribute('data-index');
+            const removed = state.projects.splice(idx, 1);
+            renderProjects(); renderTasks(); renderPreview(); showToast(`Removed project "${removed[0]}"`, 'info');
+          }
+        });
+
+        breaksList.addEventListener('input', (e) => {
+          const index = e.target.getAttribute('data-index'); const field = e.target.getAttribute('data-field');
+          if (index !== null && field) {
+            state.breaks[index][field] = field === 'duration' ? parseInt(e.target.value) || 0 : e.target.value;
+            calculateHours(); renderPreview();
+          }
+        });
+
+        breaksList.addEventListener('click', (e) => {
+          if (e.target.classList.contains('btn-delete-break')) {
+            state.breaks.splice(e.target.getAttribute('data-index'), 1);
+            renderBreaks(); calculateHours(); renderPreview();
+          }
+        });
+
+        btnQuickLunch.addEventListener('click', () => { state.breaks.push({ id: Date.now(), name: 'Lunch Break', duration: 45 }); renderBreaks(); calculateHours(); renderPreview(); showToast('Added 45m Lunch Break', 'info'); });
+        btnQuickTea.addEventListener('click', () => { state.breaks.push({ id: Date.now(), name: 'Tea Break', duration: 15 }); renderBreaks(); calculateHours(); renderPreview(); showToast('Added 15m Tea Break', 'info'); });
+        btnAddBreak.addEventListener('click', () => { state.breaks.push({ id: Date.now(), name: 'Short Break', duration: 15 }); renderBreaks(); calculateHours(); renderPreview(); });
+
+        tasksList.addEventListener('input', (e) => {
+          const index = e.target.getAttribute('data-index'); const field = e.target.getAttribute('data-field');
+          if (index !== null && field) {
+            if (field === 'hours' || field === 'minutes') {
+              const val = parseInt(e.target.value);
+              state.tasks[index][field] = isNaN(val) ? 0 : val;
+              state.tasks[index].duration = getFormattedTaskDuration(state.tasks[index]);
+            } else {
+              state.tasks[index][field] = e.target.value;
+            }
+            renderPreview();
+          }
+        });
+
+        tasksList.addEventListener('click', (e) => {
+          if (e.target.classList.contains('btn-delete-task')) {
+            state.tasks.splice(e.target.getAttribute('data-index'), 1);
+            renderTasks(); renderPreview();
+          }
+        });
+
+        btnAddTask.addEventListener('click', () => {
+          state.tasks.push({
+            id: Date.now(), title: 'New project work item',
+            project: state.projects[0] || 'InfoTech Websites',
+            status: state.userRole === 'Tester' ? 'In Testing' : 'In Development',
+            hours: 1, minutes: 0, duration: '1h'
+          });
+          renderTasks(); renderPreview();
+        });
+
+        btnSendWhatsapp.addEventListener('click', () => {
+          const encodedText = encodeURIComponent(generateWhatsAppReportText());
+          let rawPhone = state.whatsappPhone.replace(/[^0-9]/g, '');
+          window.open(rawPhone ? `https://api.whatsapp.com/send?phone=${rawPhone}&text=${encodedText}` : `https://api.whatsapp.com/send?text=${encodedText}`, '_blank');
+          showToast('Opening WhatsApp...', 'success');
+        });
+
+        btnCopyReport.addEventListener('click', () => {
+          navigator.clipboard.writeText(generateWhatsAppReportText()).then(() => showToast('📋 WhatsApp report copied!', 'success'));
+        });
+
+        btnCopySlackReport.addEventListener('click', () => {
+          navigator.clipboard.writeText(generateSlackReportText()).then(() => showToast('📋 Slack report copied!', 'success'));
+        });
+
+        btnSendSlackWebhook.addEventListener('click', () => {
+          const textPayload = generateSlackReportText();
+          const webhookUrl = state.slackWebhook ? state.slackWebhook.trim() : '';
+
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(textPayload).catch(() => {});
+          }
+
+          if (webhookUrl) {
+            fetch(webhookUrl, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text: textPayload })
+            }).catch(() => {});
+          }
+
+          try { window.location.href = 'slack://open'; } catch (e) {}
+          setTimeout(() => { window.open('https://app.slack.com/client', '_blank'); }, 500);
+
+          if (webhookUrl) {
+            showToast('🟪 Posted to Slack Webhook & opening Slack!', 'success');
+          } else {
+            showToast('📋 Copied report to clipboard & opening Slack app!', 'success');
+          }
+        });
+
+        btnSaveHistory.addEventListener('click', saveToHistory);
+        btnSaveHistorySlack.addEventListener('click', saveToHistory);
+        btnResetForm.addEventListener('click', () => {
+          state.loginTime = '07:30'; state.logoutTime = '16:30'; state.projects = ['InfoTech Websites', 'SmartFusion Websites'];
+          state.breaks = [{ id: 'b1', name: 'Lunch Break', duration: 45 }];
+          state.tasks = [{ id: 't1', title: 'Website task item', project: 'InfoTech Websites', status: 'Completed', duration: '1h' }];
+          state.blockers = ''; state.tomorrowPlan = ''; state.reportDate = getTodayDateStr(); renderAll(); showToast('Reset to default', 'info');
+        });
+        btnLoadSample.addEventListener('click', loadSampleData);
+
+        btnOpenHistory.addEventListener('click', () => { renderHistoryModal(); historyModal.classList.add('open'); });
+        btnCloseHistory.addEventListener('click', () => historyModal.classList.remove('open'));
+        btnCloseHistoryFooter.addEventListener('click', () => historyModal.classList.remove('open'));
+        btnClearHistory.addEventListener('click', () => {
+          if (confirm('Clear all history?')) { state.history = []; saveToLocalStorage(); updateHistoryBadge(); renderHistoryModal(); showToast('History cleared', 'info'); }
+        });
+      }
+
+      function saveToHistory() {
+        const reportDateStr = state.reportDate || getTodayDateStr();
+        const readableDate = formatDateReadable(reportDateStr);
+        const rel = getRelativeDateLabel(reportDateStr);
+        state.history.unshift({
+          id: Date.now(), platform: state.previewPlatform,
+          reportDate: reportDateStr,
+          timestamp: `${readableDate}${rel ? ' (' + rel + ')' : ''}`,
+          netWorking: formatMinutesToHoursStr(calculateHours().netWorkingMins), taskCount: state.tasks.length,
+          text: state.previewPlatform === 'slack' ? generateSlackReportText() : generateWhatsAppReportText()
+        });
+        saveToLocalStorage(); updateHistoryBadge(); showToast(`💾 Saved report for ${readableDate} to History!`, 'success');
+      }
+
+      function renderHistoryModal() {
+        historyListContainer.innerHTML = '';
+        if (state.history.length === 0) { historyListContainer.innerHTML = `<div class="empty-list-notice">No saved history.</div>`; return; }
+        state.history.forEach((item, index) => {
+          const card = document.createElement('div'); card.className = 'history-card';
+          card.innerHTML = `
+        <div class="history-meta"><span>📅 ${escapeHtml(item.timestamp || item.reportDate)} (${item.platform === 'slack' ? '🟪 Slack' : '💬 WhatsApp'})</span><span>⌛ ${item.netWorking} | ${item.taskCount} tasks</span></div>
+        <div class="history-text">${escapeHtml(item.text)}</div>
+        <div class="history-actions"><button class="btn btn-xs btn-outline btn-copy-history" data-index="${index}">📋 Copy</button><button class="btn btn-xs btn-icon-danger btn-delete-history" data-index="${index}">&times;</button></div>`;
+          historyListContainer.appendChild(card);
+        });
+        historyListContainer.querySelectorAll('.btn-copy-history').forEach(btn => {
+          btn.addEventListener('click', (e) => { navigator.clipboard.writeText(state.history[e.target.getAttribute('data-index')].text); showToast('Copied!', 'success'); });
+        });
+        historyListContainer.querySelectorAll('.btn-delete-history').forEach(btn => {
+          btn.addEventListener('click', (e) => { state.history.splice(e.target.getAttribute('data-index'), 1); saveToLocalStorage(); updateHistoryBadge(); renderHistoryModal(); });
+        });
+      }
+
+      function updateHistoryBadge() { historyCountBadge.textContent = state.history.length; }
+
+      function loadSampleData() {
+        state.userName = 'Vamsi Krishna'; state.userRole = 'Developer'; state.colleagueName = 'Manager / Team Lead';
+        state.loginTime = '11:00'; state.logoutTime = '13:00'; state.projects = ['InfoTech Websites', 'SmartFusion Websites'];
+        state.breaks = [];
+        state.tasks = [
+          { id: 't1', title: 'Assessment of the complete new InfoTech project websites', project: 'InfoTech Websites', status: 'Completed', duration: '1h' },
+          { id: 't2', title: 'Created New GIT for all websites', project: 'InfoTech Websites', status: 'In Development', duration: '1h' }
+        ];
+        state.blockers = ''; state.tomorrowPlan = 'Today By EOD Planning to create at least 2 websites.'; renderAll(); showToast('Sample data loaded!', 'success');
+      }
+
+      function saveToLocalStorage() {
+        try {
+          saveCurrentDateLog();
+          localStorage.setItem('smart_daily_report_v4', JSON.stringify({
+            userName: state.userName, userRole: state.userRole, colleagueName: state.colleagueName,
+            whatsappPhone: state.whatsappPhone, slackWebhook: state.slackWebhook, previewPlatform: state.previewPlatform,
+            reportDate: state.reportDate,
+            loginTime: state.loginTime, logoutTime: state.logoutTime, projects: state.projects,
+            breaks: state.breaks, tasks: state.tasks, blockers: state.blockers, tomorrowPlan: state.tomorrowPlan, history: state.history,
+            dateLogs: state.dateLogs, contactPresets: state.contactPresets
+          }));
+        } catch (e) { }
+      }
+
+      function loadFromLocalStorage() {
+        try {
+          const saved = localStorage.getItem('smart_daily_report_v4');
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (parsed.userName !== undefined) state.userName = parsed.userName;
+            if (parsed.userRole !== undefined) state.userRole = parsed.userRole;
+            if (parsed.colleagueName !== undefined) state.colleagueName = parsed.colleagueName;
+            if (parsed.whatsappPhone !== undefined) state.whatsappPhone = parsed.whatsappPhone;
+            if (parsed.slackWebhook !== undefined) state.slackWebhook = parsed.slackWebhook;
+            if (parsed.previewPlatform !== undefined) state.previewPlatform = parsed.previewPlatform;
+            if (parsed.reportDate !== undefined) state.reportDate = parsed.reportDate;
+            if (parsed.loginTime !== undefined) state.loginTime = parsed.loginTime;
+            if (parsed.logoutTime !== undefined) state.logoutTime = parsed.logoutTime;
+            if (parsed.projects !== undefined) state.projects = parsed.projects;
+            if (parsed.breaks !== undefined) state.breaks = parsed.breaks;
+            if (parsed.tasks !== undefined) state.tasks = parsed.tasks;
+            if (parsed.blockers !== undefined) state.blockers = parsed.blockers;
+            if (parsed.tomorrowPlan !== undefined) state.tomorrowPlan = parsed.tomorrowPlan;
+            if (parsed.history !== undefined) state.history = parsed.history;
+            if (parsed.dateLogs !== undefined) state.dateLogs = parsed.dateLogs;
+            if (parsed.contactPresets !== undefined) state.contactPresets = parsed.contactPresets;
+          }
+        } catch (e) { }
+      }
+
+      function escapeHtml(str) {
+        return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+      }
+
+      function showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+        container.innerHTML = '';
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<span>${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(10px)';
+          toast.style.transition = 'all 0.3s ease';
+          setTimeout(() => toast.remove(), 300);
+        }, 2000);
+      }
+
+      init();
+    });
+  </script>
 </body>
+
 </html>
