@@ -599,7 +599,7 @@
 
     .break-item-grid {
       display: grid;
-      grid-template-columns: 2fr 1.2fr 1fr 34px;
+      grid-template-columns: 2fr 1.4fr 1.2fr 34px;
       gap: 8px;
       width: 100%;
       align-items: center;
@@ -739,8 +739,13 @@
       white-space: nowrap;
     }
 
-    .btn-block {
-      width: 100%;
+    .btn:disabled,
+    .btn.disabled {
+      opacity: 0.45 !important;
+      cursor: not-allowed !important;
+      filter: grayscale(0.4);
+      box-shadow: none !important;
+      transform: none !important;
     }
 
     .btn-lg {
@@ -1232,11 +1237,68 @@
       box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
     }
 
-    .stepper-divider {
-      color: rgba(255, 255, 255, 0.25);
+    /* Shift vs Tasks Comparison Notice Card */
+    .shift-comparison-notice {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      font-size: 12.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      line-height: 1.4;
+      transition: all 0.25s ease;
+    }
+
+    .shift-comparison-notice.neutral {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+    }
+
+    .shift-comparison-notice.warning {
+      background: rgba(245, 158, 11, 0.14);
+      border: 1.5px solid rgba(245, 158, 11, 0.5);
+      color: #FDE68A;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.2);
+    }
+
+    .shift-comparison-notice.warning strong {
+      color: #FBBF24;
+    }
+
+    .shift-comparison-notice.success {
+      background: rgba(16, 185, 129, 0.14);
+      border: 1.5px solid rgba(16, 185, 129, 0.5);
+      color: #A7F3D0;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.2);
+    }
+
+    .shift-comparison-notice.info {
+      background: rgba(6, 182, 212, 0.14);
+      border: 1.5px solid rgba(6, 182, 212, 0.5);
+      color: #A5F3FC;
+    }
+
+    .shift-comparison-notice .notice-icon {
       font-size: 18px;
-      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .shift-comparison-notice .notice-content {
+      flex: 1;
+    }
+
+    .shift-comparison-notice .notice-subtext {
+      font-size: 11px;
+      margin-top: 3px;
+      color: var(--text-muted);
+    }
+
+    .shift-comparison-notice .notice-subtext span {
       font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--text-main);
     }
   </style>
 </head>
@@ -1354,7 +1416,7 @@
             </div>
             <div class="form-group">
               <label for="userName">Your Name / ID</label>
-              <input type="text" id="userName" placeholder="e.g. Vamsi Krishna" value="Vamsi Krishna">
+              <input type="text" id="userName" placeholder="e.g. Faseela" value="">
             </div>
             <div class="form-group">
               <label for="userRole">Your Work Role</label>
@@ -1377,16 +1439,19 @@
             </div>
             <div class="form-group">
               <label for="colleagueName">Colleague / Lead Name</label>
-              <input type="text" id="colleagueName" placeholder="e.g. Manager / Team Lead" value="Manager / Team Lead">
+              <input type="text" id="colleagueName" placeholder="e.g. Manager / Team Lead" value="">
             </div>
             <div class="form-group">
               <label for="whatsappPhone">Colleague WhatsApp Number <small>(Optional)</small></label>
               <input type="tel" id="whatsappPhone" placeholder="e.g. 919876543210">
             </div>
-            <div class="form-group grid-span-2">
-              <label for="slackWebhook" class="text-purple">🟪 Slack Webhook URL <small>(Optional for 1-Click
-                  Posting)</small></label>
+            <div class="form-group">
+              <label for="slackWebhook" class="text-purple">🟪 Slack Webhook URL <small>(1-Click Post)</small></label>
               <input type="text" id="slackWebhook" placeholder="https://hooks.slack.com/services/T000/B000/XXXXXX">
+            </div>
+            <div class="form-group">
+              <label for="slackMemberId" class="text-purple">👤 Slack Member / Channel ID <small>(App DM Open)</small></label>
+              <input type="text" id="slackMemberId" placeholder="e.g. U12345678 (Copy from Slack Profile)">
             </div>
           </div>
         </section>
@@ -1409,7 +1474,7 @@
               <div class="form-group">
                 <label for="loginTime">Login Time (IST)</label>
                 <div class="input-with-presets">
-                  <input type="time" id="loginTime" value="07:30">
+                  <input type="time" id="loginTime" value="">
                   <div class="preset-pills">
                     <button type="button" class="pill" data-target="loginTime" data-time="07:30">07:30 AM</button>
                     <button type="button" class="pill" data-target="loginTime" data-time="08:00">08:00 AM</button>
@@ -1423,7 +1488,7 @@
               <div class="form-group">
                 <label for="logoutTime">Logout Time (Custom Night/Day)</label>
                 <div class="input-with-presets">
-                  <input type="time" id="logoutTime" value="16:30">
+                  <input type="time" id="logoutTime" value="">
                   <div class="preset-pills">
                     <button type="button" class="pill" data-target="logoutTime" data-time="16:30">04:30 PM</button>
                     <button type="button" class="pill" data-target="logoutTime" data-time="17:30">05:30 PM</button>
@@ -1437,7 +1502,7 @@
             <div class="hours-summary-bar">
               <div class="metric-box">
                 <span class="metric-label">Gross Shift</span>
-                <span class="metric-value" id="grossShiftValue">9 hrs 0 mins</span>
+                <span class="metric-value" id="grossShiftValue">0 mins</span>
               </div>
               <div class="metric-divider">-</div>
               <div class="metric-box">
@@ -1447,9 +1512,11 @@
               <div class="metric-divider">=</div>
               <div class="metric-box highlight">
                 <span class="metric-label">Net Working Hours</span>
-                <span class="metric-value text-emerald" id="netWorkingValue">9 hrs 0 mins</span>
+                <span class="metric-value text-emerald" id="netWorkingValue">0 mins</span>
               </div>
             </div>
+
+            <div id="shiftComparisonNotice" class="shift-comparison-notice neutral"></div>
           </div>
         </section>
 
@@ -1579,7 +1646,7 @@
                   <div class="slack-message-bubble">
                     <div class="slack-avatar">👤</div>
                     <div class="slack-message-content">
-                      <div class="slack-author-name">Vamsi Krishna <span class="slack-time">1:18 PM</span></div>
+                      <div class="slack-author-name" id="slackAuthorName">Faseela <span class="slack-time">1:18 PM</span></div>
                       <div class="bubble-content" id="slackPreviewContent"></div>
                     </div>
                   </div>
@@ -1593,8 +1660,7 @@
               </div>
 
               <div class="action-bar hidden" id="slackActions">
-                <button class="btn btn-slack btn-block btn-lg" id="btnSendSlackWebhook">🟪 Post to Slack
-                  Channel</button>
+                <button class="btn btn-slack btn-block btn-lg hidden" id="btnSendSlackWebhook" style="display: none;">🟪 Post to Slack Channel</button>
                 <button class="btn btn-primary btn-block" id="btnCopySlackReport">📋 Copy Slack Markdown Text</button>
                 <button class="btn btn-outline btn-block" id="btnSaveHistorySlack">💾 Save to History</button>
               </div>
@@ -1625,17 +1691,14 @@
     /* Embedded JavaScript Application Engine */
     document.addEventListener('DOMContentLoaded', () => {
       const state = {
-        userName: 'Vamsi Krishna', userRole: 'Developer', colleagueName: 'Manager / Team Lead',
-        whatsappPhone: '', slackWebhook: '', previewPlatform: 'whatsapp',
+        userName: '', userRole: 'Developer', colleagueName: '',
+        whatsappPhone: '', slackWebhook: '', slackMemberId: '', previewPlatform: 'whatsapp',
         reportDate: '',
-        loginTime: '07:30', logoutTime: '16:30',
+        loginTime: '', logoutTime: '',
         projects: ['InfoTech Websites', 'SmartFusion Websites'],
-        breaks: [{ id: 'b1', name: 'Lunch Break', duration: 45 }, { id: 'b2', name: 'Tea Break', duration: 15 }],
-        tasks: [
-          { id: 't1', title: 'Assessment of the complete new InfoTech project websites', project: 'InfoTech Websites', status: 'Completed', hours: 1, minutes: 0, duration: '1h' },
-          { id: 't2', title: 'Created New GIT for all websites', project: 'InfoTech Websites', status: 'In Development', hours: 1, minutes: 0, duration: '1h' }
-        ],
-        blockers: '', tomorrowPlan: 'Today By EOD Planning to create at least 2 websites.', history: [], dateLogs: {}, contactPresets: []
+        breaks: [],
+        tasks: [],
+        blockers: '', tomorrowPlan: '', history: [], dateLogs: {}, contactPresets: []
       };
 
       const DEVELOPER_STATUSES = [
@@ -1661,6 +1724,7 @@
       const colleagueNameInput = document.getElementById('colleagueName');
       const whatsappPhoneInput = document.getElementById('whatsappPhone');
       const slackWebhookInput = document.getElementById('slackWebhook');
+      const slackMemberIdInput = document.getElementById('slackMemberId');
       const reportDateInput = document.getElementById('reportDate');
       const contactPresetSelect = document.getElementById('contactPresetSelect');
       const btnSaveCurrentPreset = document.getElementById('btnSaveCurrentPreset');
@@ -1734,7 +1798,7 @@
       function init() {
         loadFromLocalStorage();
         initStepperDatePopover();
-        if (!state.reportDate) state.reportDate = getTodayDateStr();
+        state.reportDate = getTodayDateStr();
         setupDate(); bindEvents(); renderAll();
       }
 
@@ -1880,13 +1944,13 @@
       function loadDateLog(dateStr) {
         if (state.dateLogs && state.dateLogs[dateStr]) {
           const log = state.dateLogs[dateStr];
-          state.loginTime = log.loginTime || '07:30'; state.logoutTime = log.logoutTime || '16:30';
+          state.loginTime = log.loginTime || ''; state.logoutTime = log.logoutTime || '';
           state.breaks = log.breaks ? JSON.parse(JSON.stringify(log.breaks)) : [];
           state.tasks = log.tasks ? JSON.parse(JSON.stringify(log.tasks)) : [];
           state.blockers = log.blockers || ''; state.tomorrowPlan = log.tomorrowPlan || '';
         } else {
-          state.loginTime = '07:30'; state.logoutTime = '16:30';
-          state.breaks = [{ id: 'b1', name: 'Lunch Break', duration: 45 }];
+          state.loginTime = ''; state.logoutTime = '';
+          state.breaks = [];
           state.tasks = []; state.blockers = ''; state.tomorrowPlan = '';
         }
       }
@@ -1900,7 +1964,7 @@
           const opt = document.createElement('option');
           opt.value = cp.id;
           let phoneLabel = cp.whatsappPhone ? ` | 📱 ${cp.whatsappPhone}` : '';
-          let slackLabel = cp.slackWebhook ? ` | 🟪 Slack Configured` : '';
+          let slackLabel = cp.slackWebhook || cp.slackMemberId ? ` | 🟪 Slack Configured` : '';
           opt.textContent = `${cp.name} (${cp.colleagueName || 'No Name'}${phoneLabel}${slackLabel})`;
           contactPresetSelect.appendChild(opt);
         });
@@ -1914,7 +1978,7 @@
       }
 
       function saveCurrentPreset() {
-        const profileName = prompt('Enter a label/name for this Contact Profile (e.g. "Manager Vamsi - Slack & WhatsApp"):', state.colleagueName || 'Team Lead');
+        const profileName = prompt('Enter a label/name for this Contact Profile (e.g. "Manager Faseela - Slack & WhatsApp"):', state.colleagueName || 'Team Lead');
         if (!profileName || !profileName.trim()) return;
 
         const cleanLabel = profileName.trim();
@@ -1925,7 +1989,8 @@
           name: cleanLabel,
           colleagueName: state.colleagueName || '',
           whatsappPhone: state.whatsappPhone || '',
-          slackWebhook: state.slackWebhook || ''
+          slackWebhook: state.slackWebhook || '',
+          slackMemberId: state.slackMemberId || ''
         };
 
         state.contactPresets.push(newPreset);
@@ -1961,10 +2026,12 @@
           state.colleagueName = preset.colleagueName || '';
           state.whatsappPhone = preset.whatsappPhone || '';
           state.slackWebhook = preset.slackWebhook || '';
+          state.slackMemberId = preset.slackMemberId || '';
 
           colleagueNameInput.value = state.colleagueName;
           whatsappPhoneInput.value = state.whatsappPhone;
           slackWebhookInput.value = state.slackWebhook;
+          if (slackMemberIdInput) slackMemberIdInput.value = state.slackMemberId;
 
           renderPreview();
           saveToLocalStorage();
@@ -1974,8 +2041,16 @@
       }
 
       function calculateHours() {
-        const loginStr = loginTimeInput.value || '07:30';
-        const logoutStr = logoutTimeInput.value || '16:30';
+        const loginStr = loginTimeInput.value || '';
+        const logoutStr = logoutTimeInput.value || '';
+        if (!loginStr || !logoutStr) {
+          grossShiftValue.textContent = '0 mins';
+          const totalBreakMins = state.breaks.reduce((acc, curr) => acc + (parseInt(curr.duration) || 0), 0);
+          totalBreaksValue.textContent = formatMinutesToHoursStr(totalBreakMins);
+          netWorkingValue.textContent = '0 mins';
+          updateShiftComparisonNotice();
+          return { grossShiftMins: 0, totalBreakMins, netWorkingMins: 0, loginFormatted: 'Not set', logoutFormatted: 'Not set' };
+        }
         const loginMins = timeStrToMinutes(loginStr);
         let logoutMins = timeStrToMinutes(logoutStr);
         if (logoutMins < loginMins) logoutMins += 24 * 60;
@@ -1988,10 +2063,124 @@
         totalBreaksValue.textContent = formatMinutesToHoursStr(totalBreakMins);
         netWorkingValue.textContent = formatMinutesToHoursStr(netWorkingMins);
 
+        updateShiftComparisonNotice();
+
         return {
           grossShiftMins, totalBreakMins, netWorkingMins,
           loginFormatted: format12Hour(loginStr), logoutFormatted: format12Hour(logoutStr)
         };
+      }
+
+      let isReportValidToExport = false;
+      let exportBlockedReason = '';
+
+      function updateShiftComparisonNotice() {
+        const noticeElem = document.getElementById('shiftComparisonNotice');
+        if (!noticeElem) return;
+
+        const loginStr = loginTimeInput ? loginTimeInput.value : '';
+        const logoutStr = logoutTimeInput ? logoutTimeInput.value : '';
+
+        let totalTasksMins = 0;
+        (state.tasks || []).forEach(t => {
+          totalTasksMins += (getTaskHours(t) * 60) + getTaskMinutes(t);
+        });
+
+        if (!loginStr || !logoutStr) {
+          isReportValidToExport = false;
+          exportBlockedReason = 'Please enter your Login & Logout times first.';
+          if (totalTasksMins > 0) {
+            noticeElem.className = 'shift-comparison-notice info';
+            noticeElem.innerHTML = `
+              <div class="notice-icon">ℹ️</div>
+              <div class="notice-content">
+                <strong>Tasks Logged:</strong> ${formatMinutesToHoursStr(totalTasksMins)}. Set your <strong>Login &amp; Logout times</strong> to compare shift hours with tasks.
+              </div>`;
+          } else {
+            noticeElem.className = 'shift-comparison-notice neutral';
+            noticeElem.innerHTML = `
+              <div class="notice-icon">⏱️</div>
+              <div class="notice-content">
+                Enter your <strong>Login &amp; Logout time</strong> and <strong>Tasks</strong> to see realtime time difference.
+              </div>`;
+          }
+          updateExportButtonsState();
+          return;
+        }
+
+        const loginMins = timeStrToMinutes(loginStr);
+        let logoutMins = timeStrToMinutes(logoutStr);
+        if (logoutMins < loginMins) logoutMins += 24 * 60;
+
+        const grossShiftMins = Math.max(0, logoutMins - loginMins);
+        const totalBreakMins = state.breaks.reduce((acc, curr) => acc + (parseInt(curr.duration) || 0), 0);
+        const netWorkingMins = Math.max(0, grossShiftMins - totalBreakMins);
+
+        const diffMins = netWorkingMins - totalTasksMins;
+        const diffStr = formatMinutesToHoursStr(Math.abs(diffMins));
+        const netWorkStr = formatMinutesToHoursStr(netWorkingMins);
+        const tasksStr = formatMinutesToHoursStr(totalTasksMins);
+
+        if (state.tasks.length === 0) {
+          isReportValidToExport = false;
+          exportBlockedReason = 'Please add at least one task item before exporting your report.';
+          noticeElem.className = 'shift-comparison-notice warning';
+          noticeElem.innerHTML = `
+            <div class="notice-icon">⚠️</div>
+            <div class="notice-content">
+              <strong>No Tasks Added:</strong> Please add your task items for today. You cannot send or copy an empty report.
+            </div>`;
+        } else if (diffMins > 0) {
+          isReportValidToExport = false;
+          exportBlockedReason = `You still have ${diffStr} difference left to update in Tasks!`;
+          noticeElem.className = 'shift-comparison-notice warning';
+          noticeElem.innerHTML = `
+            <div class="notice-icon">⚠️</div>
+            <div class="notice-content">
+              <strong>Time Difference Notice:</strong> Still you have <strong>${diffStr}</strong> difference left you have to update in Tasks!
+              <div class="notice-subtext">Net Work Shift: <span>${netWorkStr}</span> | Tasks Logged: <span>${tasksStr}</span></div>
+            </div>`;
+        } else if (diffMins < 0) {
+          isReportValidToExport = false;
+          exportBlockedReason = `Total tasks (${tasksStr}) exceed Net Working Hours (${netWorkStr}) by ${diffStr}!`;
+          noticeElem.className = 'shift-comparison-notice info';
+          noticeElem.innerHTML = `
+            <div class="notice-icon">💡</div>
+            <div class="notice-content">
+              <strong>Tasks Exceed Net Shift:</strong> Total tasks (${tasksStr}) exceed Net Working Hours (${netWorkStr}) by <strong>${diffStr}</strong>.
+            </div>`;
+        } else {
+          isReportValidToExport = true;
+          exportBlockedReason = '';
+          noticeElem.className = 'shift-comparison-notice success';
+          noticeElem.innerHTML = `
+            <div class="notice-icon">✅</div>
+            <div class="notice-content">
+              <strong>Hours Matched Perfectly!</strong> Total task duration (${tasksStr}) matches your Net Working Hours.
+            </div>`;
+        }
+
+        updateExportButtonsState();
+      }
+
+      function updateExportButtonsState() {
+        const actionBtns = [
+          btnSendWhatsapp, btnCopyReport, btnSaveHistory,
+          btnSendSlackWebhook, btnCopySlackReport, btnSaveHistorySlack
+        ];
+
+        actionBtns.forEach(btn => {
+          if (!btn) return;
+          if (isReportValidToExport) {
+            btn.disabled = false;
+            btn.classList.remove('disabled');
+            btn.removeAttribute('title');
+          } else {
+            btn.disabled = true;
+            btn.classList.add('disabled');
+            btn.setAttribute('title', `Blocked: ${exportBlockedReason}`);
+          }
+        });
       }
 
       function timeStrToMinutes(timeStr) {
@@ -2026,6 +2215,28 @@
         });
       }
 
+      function getBreakHours(b) {
+        if (b.hours !== undefined && b.hours !== null && b.hours !== '') return parseInt(b.hours) || 0;
+        const total = parseInt(b.duration) || 0;
+        return Math.floor(total / 60);
+      }
+
+      function getBreakMinutes(b) {
+        if (b.minutes !== undefined && b.minutes !== null && b.minutes !== '') return parseInt(b.minutes) || 0;
+        const total = parseInt(b.duration) || 0;
+        return total % 60;
+      }
+
+      function getFormattedBreakDuration(b) {
+        const hrs = getBreakHours(b);
+        const mins = getBreakMinutes(b);
+        if (hrs > 0 && mins > 0) return `${hrs}h ${mins}m`;
+        if (hrs > 0) return `${hrs}h`;
+        if (mins > 0) return `${mins}m`;
+        if (b.duration) return `${b.duration}m`;
+        return '0m';
+      }
+
       function renderBreaks() {
         breaksList.innerHTML = '';
         if (state.breaks.length === 0) {
@@ -2037,11 +2248,17 @@
           div.innerHTML = `
         <div class="break-item-grid">
           <input type="text" value="${escapeHtml(b.name)}" placeholder="Break Name" data-index="${index}" data-field="name">
-          <div style="display:flex; align-items:center; gap:4px;">
-            <input type="number" value="${b.duration}" min="0" data-index="${index}" data-field="duration">
-            <span style="font-size:11px; color:var(--text-muted);">mins</span>
+          <div class="task-duration-picker" title="Break duration in hours and minutes">
+            <div class="duration-unit">
+              <input type="number" min="0" max="24" value="${getBreakHours(b)}" placeholder="0" data-index="${index}" data-field="hours">
+              <span class="unit-text">h</span>
+            </div>
+            <div class="duration-unit">
+              <input type="number" min="0" max="59" value="${getBreakMinutes(b)}" placeholder="0" data-index="${index}" data-field="minutes">
+              <span class="unit-text">m</span>
+            </div>
           </div>
-          <span style="font-size:11px; color:var(--accent-amber); font-weight:600;">☕ ${b.duration || 0}m</span>
+          <span id="breakBadge_${index}" style="font-size:11px; color:var(--accent-amber); font-weight:700;">☕ ${getFormattedBreakDuration(b)}</span>
           <button class="btn-icon-danger btn-delete-break" data-index="${index}">&times;</button>
         </div>`;
           breaksList.appendChild(div);
@@ -2127,27 +2344,53 @@
         const formattedDate = formatDateReadable(reportDateStr);
         const relLabel = getRelativeDateLabel(reportDateStr);
         const dateTitle = relLabel ? `${formattedDate} • ${relLabel.toUpperCase()}` : formattedDate;
-        let text = `🚀 *DAILY WORK REPORT* (${dateTitle})\n━━━━━━━━━━━━━━━━━━━━━\n👤 *Name:* ${state.userName} _(${state.userRole})_\n⏰ *Shift:* ${hoursData.loginFormatted} - ${hoursData.logoutFormatted} _(${formatMinutesToHoursStr(hoursData.netWorkingMins)} Net Work)_\n☕ *Breaks:* ${formatMinutesToHoursStr(hoursData.totalBreakMins)}\n━━━━━━━━━━━━━━━━━━━━━\n\n📋 *TASKS DONE:*\n`;
+        const nameDisplay = state.userName.trim() ? state.userName.trim() : 'Faseela';
+        const roleDisplay = state.userRole ? ` _(${state.userRole})_` : '';
 
-        const projectGroups = {};
-        state.tasks.forEach(t => {
-          const projKey = t.project || 'InfoTech Websites';
-          if (!projectGroups[projKey]) projectGroups[projKey] = [];
-          projectGroups[projKey].push(t);
-        });
+        let shiftDisplay = '';
+        if (hoursData.loginFormatted === 'Not set' || hoursData.logoutFormatted === 'Not set') {
+          shiftDisplay = 'Not set';
+        } else {
+          shiftDisplay = `${hoursData.loginFormatted} - ${hoursData.logoutFormatted} _(${formatMinutesToHoursStr(hoursData.netWorkingMins)} Net Work)_`;
+        }
 
-        Object.keys(projectGroups).forEach(proj => {
-          text += `\n📁 *PROJECT: ${proj}*\n`;
-          projectGroups[proj].forEach(t => {
-            const sObj = getStatusObj(t.status);
-            const durStr = getFormattedTaskDuration(t);
-            text += `${sObj.icon} *[${t.status}]* ${t.title}${durStr ? ` _(${durStr})_` : ''}\n`;
+        let text = `📊 *DAILY WORK REPORT*\n`;
+        text += `📅 *Date:* ${dateTitle}\n`;
+        text += `👤 *Name:* ${nameDisplay}${roleDisplay}\n`;
+        text += `⏰ *Shift:* ${shiftDisplay}\n`;
+        text += `☕ *Breaks:* ${formatMinutesToHoursStr(hoursData.totalBreakMins)}\n`;
+        text += `─────────────────────────\n\n`;
+        text += `📋 *TASKS DONE:*\n`;
+
+        if (state.tasks.length === 0) {
+          text += `_No tasks logged yet_\n`;
+        } else {
+          const projectGroups = {};
+          state.tasks.forEach(t => {
+            const projKey = t.project || 'InfoTech Websites';
+            if (!projectGroups[projKey]) projectGroups[projKey] = [];
+            projectGroups[projKey].push(t);
           });
-        });
 
-        if (state.blockers.trim()) text += `\n🚨 *BLOCKERS / PENDING:*\n${state.blockers.trim()}\n`;
-        if (state.tomorrowPlan.trim()) text += `\n📌 *Notes / Next Targets:* ${state.tomorrowPlan.trim()}\n`;
-        return text + `\nThank you! 🙏`;
+          Object.keys(projectGroups).forEach(proj => {
+            text += `\n📁 *PROJECT: ${proj}*\n`;
+            projectGroups[proj].forEach(t => {
+              const sObj = getStatusObj(t.status);
+              const durStr = getFormattedTaskDuration(t);
+              text += `${sObj.icon} *[${t.status}]* ${t.title}${durStr ? ` _(${durStr})_` : ''}\n`;
+            });
+          });
+        }
+
+        if (state.blockers && state.blockers.trim()) {
+          text += `\n🚨 *BLOCKERS / PENDING:*\n${state.blockers.trim()}\n`;
+        }
+        if (state.tomorrowPlan && state.tomorrowPlan.trim()) {
+          text += `\n📌 *Notes / Next Targets:*\n${state.tomorrowPlan.trim()}\n`;
+        }
+
+        text += `\n─────────────────────────\nThank you! 🙏`;
+        return text;
       }
 
       function generateSlackReportText() {
@@ -2156,33 +2399,64 @@
         const formattedDate = formatDateReadable(reportDateStr);
         const relLabel = getRelativeDateLabel(reportDateStr);
         const dateTitle = relLabel ? `${formattedDate} • ${relLabel.toUpperCase()}` : formattedDate;
-        let text = `:rocket: *DAILY WORK REPORT* (${dateTitle})\n──────────────────────────────────\n:bust_in_silhouette: *Name:* ${state.userName} _(${state.userRole})_\n:alarm_clock: *Shift:* ${hoursData.loginFormatted} - ${hoursData.logoutFormatted} _(${formatMinutesToHoursStr(hoursData.netWorkingMins)} Net Work)_\n:coffee: *Breaks:* ${formatMinutesToHoursStr(hoursData.totalBreakMins)}\n──────────────────────────────────\n\n:clipboard: *TASKS DONE:*\n`;
+        const nameDisplay = state.userName.trim() ? state.userName.trim() : 'Faseela';
+        const roleDisplay = state.userRole ? ` _(${state.userRole})_` : '';
 
-        const projectGroups = {};
-        state.tasks.forEach(t => {
-          const projKey = t.project || 'InfoTech Websites';
-          if (!projectGroups[projKey]) projectGroups[projKey] = [];
-          projectGroups[projKey].push(t);
-        });
+        let shiftDisplay = '';
+        if (hoursData.loginFormatted === 'Not set' || hoursData.logoutFormatted === 'Not set') {
+          shiftDisplay = 'Not set';
+        } else {
+          shiftDisplay = `${hoursData.loginFormatted} - ${hoursData.logoutFormatted} _(${formatMinutesToHoursStr(hoursData.netWorkingMins)} Net Work)_`;
+        }
 
-        Object.keys(projectGroups).forEach(proj => {
-          text += `\n:file_folder: *PROJECT: ${proj}*\n`;
-          projectGroups[proj].forEach(t => {
-            const sObj = getStatusObj(t.status);
-            const durStr = getFormattedTaskDuration(t);
-            text += `${sObj.slackEmoji} *[${t.status}]* ${t.title}${durStr ? ` _(${durStr})_` : ''}\n`;
+        let text = `:bar_chart: *DAILY WORK REPORT*\n`;
+        text += `:calendar: *Date:* ${dateTitle}\n`;
+        text += `:bust_in_silhouette: *Name:* ${nameDisplay}${roleDisplay}\n`;
+        text += `:alarm_clock: *Shift:* ${shiftDisplay}\n`;
+        text += `:coffee: *Breaks:* ${formatMinutesToHoursStr(hoursData.totalBreakMins)}\n`;
+        text += `─────────────────────────\n\n`;
+        text += `:clipboard: *TASKS DONE:*\n`;
+
+        if (state.tasks.length === 0) {
+          text += `_No tasks logged yet_\n`;
+        } else {
+          const projectGroups = {};
+          state.tasks.forEach(t => {
+            const projKey = t.project || 'InfoTech Websites';
+            if (!projectGroups[projKey]) projectGroups[projKey] = [];
+            projectGroups[projKey].push(t);
           });
-        });
 
-        if (state.blockers.trim()) text += `\n:warning: *BLOCKERS / PENDING:*\n${state.blockers.trim()}\n`;
-        if (state.tomorrowPlan.trim()) text += `\n:dart: *Notes / Next Targets:* ${state.tomorrowPlan.trim()}\n`;
-        return text + `\nThank you! :pray:`;
+          Object.keys(projectGroups).forEach(proj => {
+            text += `\n:file_folder: *PROJECT: ${proj}*\n`;
+            projectGroups[proj].forEach(t => {
+              const sObj = getStatusObj(t.status);
+              const durStr = getFormattedTaskDuration(t);
+              text += `${sObj.slackEmoji} *[${t.status}]* ${t.title}${durStr ? ` _(${durStr})_` : ''}\n`;
+            });
+          });
+        }
+
+        if (state.blockers && state.blockers.trim()) {
+          text += `\n:warning: *BLOCKERS / PENDING:*\n${state.blockers.trim()}\n`;
+        }
+        if (state.tomorrowPlan && state.tomorrowPlan.trim()) {
+          text += `\n:dart: *Notes / Next Targets:*\n${state.tomorrowPlan.trim()}\n`;
+        }
+
+        text += `\n─────────────────────────\nThank you! :pray:`;
+        return text;
       }
 
       function renderPreview() {
         reportPreviewContent.innerHTML = escapeHtml(generateWhatsAppReportText()).replace(/\*(.*?)\*/g, '<strong>$1</strong>').replace(/_(.*?)_/g, '<em>$1</em>');
         slackPreviewContent.innerHTML = escapeHtml(generateSlackReportText()).replace(/\*(.*?)\*/g, '<strong>$1</strong>').replace(/_(.*?)_/g, '<em>$1</em>');
         previewRecipientName.textContent = state.colleagueName.trim() ? `Report to: ${state.colleagueName}` : 'Work Report Chat';
+        const slackAuthorElem = document.getElementById('slackAuthorName');
+        if (slackAuthorElem) {
+          slackAuthorElem.innerHTML = `${escapeHtml(state.userName.trim() || 'Faseela')} <span class="slack-time">1:18 PM</span>`;
+        }
+        updateShiftComparisonNotice();
         saveToLocalStorage();
       }
 
@@ -2204,6 +2478,7 @@
         userNameInput.value = state.userName; userRoleSelect.value = state.userRole;
         colleagueNameInput.value = state.colleagueName; whatsappPhoneInput.value = state.whatsappPhone;
         slackWebhookInput.value = state.slackWebhook;
+        if (slackMemberIdInput) slackMemberIdInput.value = state.slackMemberId || '';
         if (reportDateInput) reportDateInput.value = state.reportDate || getTodayDateStr();
         loginTimeInput.value = state.loginTime;
         logoutTimeInput.value = state.logoutTime; blockersInput.value = state.blockers;
@@ -2217,6 +2492,9 @@
         colleagueNameInput.addEventListener('input', (e) => { state.colleagueName = e.target.value; renderPreview(); });
         whatsappPhoneInput.addEventListener('input', (e) => { state.whatsappPhone = e.target.value; renderPreview(); });
         slackWebhookInput.addEventListener('input', (e) => { state.slackWebhook = e.target.value; saveToLocalStorage(); });
+        if (slackMemberIdInput) {
+          slackMemberIdInput.addEventListener('input', (e) => { state.slackMemberId = e.target.value; saveToLocalStorage(); });
+        }
 
         if (contactPresetSelect) {
           contactPresetSelect.addEventListener('change', (e) => applyContactPreset(e.target.value));
@@ -2295,10 +2573,33 @@
         });
 
         breaksList.addEventListener('input', (e) => {
-          const index = e.target.getAttribute('data-index'); const field = e.target.getAttribute('data-field');
-          if (index !== null && field) {
-            state.breaks[index][field] = field === 'duration' ? parseInt(e.target.value) || 0 : e.target.value;
-            calculateHours(); renderPreview();
+          const index = e.target.getAttribute('data-index');
+          const field = e.target.getAttribute('data-field');
+          if (index !== null && index !== undefined && field) {
+            const b = state.breaks[index];
+            if (!b) return;
+            if (field === 'hours' || field === 'minutes') {
+              const val = parseInt(e.target.value);
+              b[field] = isNaN(val) ? 0 : val;
+              const hrs = getBreakHours(b);
+              const mins = getBreakMinutes(b);
+              b.duration = (hrs * 60) + mins;
+            } else if (field === 'duration') {
+              const dur = parseInt(e.target.value) || 0;
+              b.duration = dur;
+              b.hours = Math.floor(dur / 60);
+              b.minutes = dur % 60;
+            } else {
+              b[field] = e.target.value;
+            }
+
+            const badgeElem = document.getElementById(`breakBadge_${index}`);
+            if (badgeElem) {
+              badgeElem.textContent = `☕ ${getFormattedBreakDuration(b)}`;
+            }
+
+            calculateHours();
+            renderPreview();
           }
         });
 
@@ -2309,9 +2610,9 @@
           }
         });
 
-        btnQuickLunch.addEventListener('click', () => { state.breaks.push({ id: Date.now(), name: 'Lunch Break', duration: 45 }); renderBreaks(); calculateHours(); renderPreview(); showToast('Added 45m Lunch Break', 'info'); });
-        btnQuickTea.addEventListener('click', () => { state.breaks.push({ id: Date.now(), name: 'Tea Break', duration: 15 }); renderBreaks(); calculateHours(); renderPreview(); showToast('Added 15m Tea Break', 'info'); });
-        btnAddBreak.addEventListener('click', () => { state.breaks.push({ id: Date.now(), name: 'Short Break', duration: 15 }); renderBreaks(); calculateHours(); renderPreview(); });
+        btnQuickLunch.addEventListener('click', () => { state.breaks.push({ id: Date.now(), name: 'Lunch Break', duration: 45, hours: 0, minutes: 45 }); renderBreaks(); calculateHours(); renderPreview(); showToast('Added 45m Lunch Break', 'info'); });
+        btnQuickTea.addEventListener('click', () => { state.breaks.push({ id: Date.now(), name: 'Tea Break', duration: 15, hours: 0, minutes: 15 }); renderBreaks(); calculateHours(); renderPreview(); showToast('Added 15m Tea Break', 'info'); });
+        btnAddBreak.addEventListener('click', () => { state.breaks.push({ id: Date.now(), name: 'Short Break', duration: 15, hours: 0, minutes: 15 }); renderBreaks(); calculateHours(); renderPreview(); });
 
         tasksList.addEventListener('input', (e) => {
           const index = e.target.getAttribute('data-index'); const field = e.target.getAttribute('data-field');
@@ -2345,6 +2646,10 @@
         });
 
         btnSendWhatsapp.addEventListener('click', () => {
+          if (!isReportValidToExport) {
+            showToast(`🛑 Cannot Send: ${exportBlockedReason}`, 'warning');
+            return;
+          }
           const encodedText = encodeURIComponent(generateWhatsAppReportText());
           let rawPhone = state.whatsappPhone.replace(/[^0-9]/g, '');
           window.open(rawPhone ? `https://api.whatsapp.com/send?phone=${rawPhone}&text=${encodedText}` : `https://api.whatsapp.com/send?text=${encodedText}`, '_blank');
@@ -2352,47 +2657,79 @@
         });
 
         btnCopyReport.addEventListener('click', () => {
+          if (!isReportValidToExport) {
+            showToast(`🛑 Cannot Copy: ${exportBlockedReason}`, 'warning');
+            return;
+          }
           navigator.clipboard.writeText(generateWhatsAppReportText()).then(() => showToast('📋 WhatsApp report copied!', 'success'));
         });
 
         btnCopySlackReport.addEventListener('click', () => {
+          if (!isReportValidToExport) {
+            showToast(`🛑 Cannot Copy: ${exportBlockedReason}`, 'warning');
+            return;
+          }
           navigator.clipboard.writeText(generateSlackReportText()).then(() => showToast('📋 Slack report copied!', 'success'));
         });
 
-        btnSendSlackWebhook.addEventListener('click', () => {
+        btnSendSlackWebhook.addEventListener('click', async () => {
+          if (!isReportValidToExport) {
+            showToast(`🛑 Cannot Post: ${exportBlockedReason}`, 'warning');
+            return;
+          }
           const textPayload = generateSlackReportText();
           const webhookUrl = state.slackWebhook ? state.slackWebhook.trim() : '';
+          const targetId = state.slackMemberId ? state.slackMemberId.trim().replace(/^@/, '') : '';
 
           if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(textPayload).catch(() => {});
+            try {
+              await navigator.clipboard.writeText(textPayload);
+            } catch (e) {}
           }
 
+          let webhookPosted = false;
           if (webhookUrl) {
-            fetch(webhookUrl, {
-              method: 'POST',
-              mode: 'no-cors',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ text: textPayload })
-            }).catch(() => {});
+            try {
+              await fetch(webhookUrl, {
+                method: 'POST',
+                body: JSON.stringify({ text: textPayload })
+              });
+              webhookPosted = true;
+              showToast('🟪 Daily Report posted to Slack Webhook!', 'success');
+            } catch (err) {
+              showToast('📋 Webhook sent & report copied to clipboard!', 'success');
+            }
           }
 
-          try { window.location.href = 'slack://open'; } catch (e) {}
-          setTimeout(() => { window.open('https://app.slack.com/client', '_blank'); }, 500);
-
-          if (webhookUrl) {
-            showToast('🟪 Posted to Slack Webhook & opening Slack!', 'success');
-          } else {
-            showToast('📋 Copied report to clipboard & opening Slack app!', 'success');
+          if (targetId) {
+            const redirectUrl = `https://slack.com/app_redirect?channel=${encodeURIComponent(targetId)}`;
+            window.open(redirectUrl, '_blank');
+            showToast(`💬 Opening Slack chat for ${targetId}! Press Ctrl+V to paste message.`, 'success');
+          } else if (!webhookPosted) {
+            window.open('https://app.slack.com/client', '_blank');
+            showToast('📋 Report copied to clipboard! Press Ctrl+V in Slack to paste.', 'info');
           }
         });
 
         btnSaveHistory.addEventListener('click', saveToHistory);
         btnSaveHistorySlack.addEventListener('click', saveToHistory);
         btnResetForm.addEventListener('click', () => {
-          state.loginTime = '07:30'; state.logoutTime = '16:30'; state.projects = ['InfoTech Websites', 'SmartFusion Websites'];
-          state.breaks = [{ id: 'b1', name: 'Lunch Break', duration: 45 }];
-          state.tasks = [{ id: 't1', title: 'Website task item', project: 'InfoTech Websites', status: 'Completed', duration: '1h' }];
-          state.blockers = ''; state.tomorrowPlan = ''; state.reportDate = getTodayDateStr(); renderAll(); showToast('Reset to default', 'info');
+          state.userName = '';
+          state.colleagueName = '';
+          state.whatsappPhone = '';
+          state.slackWebhook = '';
+          state.slackMemberId = '';
+          state.loginTime = '';
+          state.logoutTime = '';
+          state.projects = ['InfoTech Websites', 'SmartFusion Websites'];
+          state.breaks = [];
+          state.tasks = [];
+          state.blockers = '';
+          state.tomorrowPlan = '';
+          state.reportDate = getTodayDateStr();
+          if (contactPresetSelect) contactPresetSelect.value = '';
+          renderAll();
+          showToast('All fields cleared!', 'info');
         });
         btnLoadSample.addEventListener('click', loadSampleData);
 
@@ -2405,6 +2742,10 @@
       }
 
       function saveToHistory() {
+        if (!isReportValidToExport) {
+          showToast(`🛑 Cannot Save: ${exportBlockedReason}`, 'warning');
+          return;
+        }
         const reportDateStr = state.reportDate || getTodayDateStr();
         const readableDate = formatDateReadable(reportDateStr);
         const rel = getRelativeDateLabel(reportDateStr);
@@ -2440,7 +2781,7 @@
       function updateHistoryBadge() { historyCountBadge.textContent = state.history.length; }
 
       function loadSampleData() {
-        state.userName = 'Vamsi Krishna'; state.userRole = 'Developer'; state.colleagueName = 'Manager / Team Lead';
+        state.userName = 'Faseela'; state.userRole = 'Developer'; state.colleagueName = 'Manager / Team Lead';
         state.loginTime = '11:00'; state.logoutTime = '13:00'; state.projects = ['InfoTech Websites', 'SmartFusion Websites'];
         state.breaks = [];
         state.tasks = [
@@ -2455,7 +2796,7 @@
           saveCurrentDateLog();
           localStorage.setItem('smart_daily_report_v4', JSON.stringify({
             userName: state.userName, userRole: state.userRole, colleagueName: state.colleagueName,
-            whatsappPhone: state.whatsappPhone, slackWebhook: state.slackWebhook, previewPlatform: state.previewPlatform,
+            whatsappPhone: state.whatsappPhone, slackWebhook: state.slackWebhook, slackMemberId: state.slackMemberId, previewPlatform: state.previewPlatform,
             reportDate: state.reportDate,
             loginTime: state.loginTime, logoutTime: state.logoutTime, projects: state.projects,
             breaks: state.breaks, tasks: state.tasks, blockers: state.blockers, tomorrowPlan: state.tomorrowPlan, history: state.history,
@@ -2474,6 +2815,7 @@
             if (parsed.colleagueName !== undefined) state.colleagueName = parsed.colleagueName;
             if (parsed.whatsappPhone !== undefined) state.whatsappPhone = parsed.whatsappPhone;
             if (parsed.slackWebhook !== undefined) state.slackWebhook = parsed.slackWebhook;
+            if (parsed.slackMemberId !== undefined) state.slackMemberId = parsed.slackMemberId;
             if (parsed.previewPlatform !== undefined) state.previewPlatform = parsed.previewPlatform;
             if (parsed.reportDate !== undefined) state.reportDate = parsed.reportDate;
             if (parsed.loginTime !== undefined) state.loginTime = parsed.loginTime;
